@@ -14,36 +14,19 @@ SIMPLE_RATIO_DEF(QRatio)
 SIMPLE_DISTANCE_DEF(hamming)
 SIMPLE_RATIO_DEF(normalized_hamming)
 
-PyObject* levenshtein_no_process(const proc_string& s1, const proc_string& s2,
+PyObject* levenshtein_func(const RapidFuzzString& s1, const RapidFuzzString& s2,
     size_t insertion, size_t deletion, size_t substitution, size_t max)
 {
     rapidfuzz::LevenshteinWeightTable weights = {insertion, deletion, substitution};
 
-    size_t result = levenshtein_impl_no_process(s1, s2, weights, max);
+    size_t result = levenshtein_impl(s1, s2, weights, max);
     return dist_to_long(result);
 }
 
-PyObject* levenshtein_default_process(const proc_string& s1, const proc_string& s2,
-    size_t insertion, size_t deletion, size_t substitution, size_t max)
-{
-    rapidfuzz::LevenshteinWeightTable weights = {insertion, deletion, substitution};
-
-    size_t result = levenshtein_impl_default_process(s1, s2, weights, max);
-    return dist_to_long(result);
-}
-
-double normalized_levenshtein_no_process(const proc_string& s1, const proc_string& s2,
+double normalized_levenshtein_func(const RapidFuzzString& s1, const RapidFuzzString& s2,
     size_t insertion, size_t deletion, size_t substitution, double score_cutoff)
 {
     rapidfuzz::LevenshteinWeightTable weights = {insertion, deletion, substitution};
 
-    return normalized_levenshtein_impl_no_process(s1, s2, weights, score_cutoff);
-}
-
-double normalized_levenshtein_default_process(const proc_string& s1, const proc_string& s2,
-    size_t insertion, size_t deletion, size_t substitution, double score_cutoff)
-{
-    rapidfuzz::LevenshteinWeightTable weights = {insertion, deletion, substitution};
-
-    return normalized_levenshtein_impl_default_process(s1, s2, weights, score_cutoff);
+    return normalized_levenshtein_impl(s1, s2, weights, score_cutoff);
 }

@@ -2,7 +2,7 @@
 # cython: language_level=3
 # cython: binding=True
 
-from rapidfuzz.utils import default_process
+from rapidfuzz.utils import default_process, no_process
 
 from rapidfuzz.string_metric import (
     levenshtein,
@@ -34,48 +34,49 @@ from cpython.object cimport PyObject
 from cpython.ref cimport Py_INCREF
 from cpython.ref cimport Py_DECREF
 
-from cpp_common cimport proc_string, is_valid_string, convert_string, hash_array, hash_sequence
+from cpp_common cimport is_valid_string, convert_string, hash_array, hash_sequence, ProcStringWrapper, RapidFuzzString
 
 import heapq
 from array import array
+from rapidfuzz_typeinfo cimport RapidFuzzProcess
 
+cdef RapidFuzzProcess DefaultProcess = default_process.__RapidFuzzProcess
+cdef RapidFuzzProcess NoProcess = no_process.__RapidFuzzProcess
 
-cdef inline proc_string conv_sequence(seq) except *:
-    if is_valid_string(seq):
-        return move(convert_string(seq))
-    elif isinstance(seq, array):
-        return move(hash_array(seq))
+cdef RapidFuzzProcess getProcessor(processor):
+    if processor is True:
+        return DefaultProcess
     else:
-        return move(hash_sequence(seq))
+        return getattr(processor, "__RapidFuzzProcess", None)
 
 cdef extern from "cpp_process.hpp":
     cdef cppclass CachedScorerContext:
         CachedScorerContext()
-        double ratio(const proc_string&, double) except +
+        double ratio(const RapidFuzzString&, double) except +
 
     cdef cppclass CachedDistanceContext:
         CachedDistanceContext()
-        size_t ratio(const proc_string&, size_t) except +
+        size_t ratio(const RapidFuzzString&, size_t) except +
 
     # normalized distances
     # fuzz
-    CachedScorerContext cached_ratio_init(                   const proc_string&, int) except +
-    CachedScorerContext cached_partial_ratio_init(           const proc_string&, int) except +
-    CachedScorerContext cached_token_sort_ratio_init(        const proc_string&, int) except +
-    CachedScorerContext cached_token_set_ratio_init(         const proc_string&, int) except +
-    CachedScorerContext cached_token_ratio_init(             const proc_string&, int) except +
-    CachedScorerContext cached_partial_token_sort_ratio_init(const proc_string&, int) except +
-    CachedScorerContext cached_partial_token_set_ratio_init( const proc_string&, int) except +
-    CachedScorerContext cached_partial_token_ratio_init(     const proc_string&, int) except +
-    CachedScorerContext cached_WRatio_init(                  const proc_string&, int) except +
-    CachedScorerContext cached_QRatio_init(                  const proc_string&, int) except +
+    CachedScorerContext cached_ratio_init(                   const RapidFuzzString&) except +
+    CachedScorerContext cached_partial_ratio_init(           const RapidFuzzString&) except +
+    CachedScorerContext cached_token_sort_ratio_init(        const RapidFuzzString&) except +
+    CachedScorerContext cached_token_set_ratio_init(         const RapidFuzzString&) except +
+    CachedScorerContext cached_token_ratio_init(             const RapidFuzzString&) except +
+    CachedScorerContext cached_partial_token_sort_ratio_init(const RapidFuzzString&) except +
+    CachedScorerContext cached_partial_token_set_ratio_init( const RapidFuzzString&) except +
+    CachedScorerContext cached_partial_token_ratio_init(     const RapidFuzzString&) except +
+    CachedScorerContext cached_WRatio_init(                  const RapidFuzzString&) except +
+    CachedScorerContext cached_QRatio_init(                  const RapidFuzzString&) except +
     # string_metric
-    CachedScorerContext cached_normalized_levenshtein_init(const proc_string&, int, size_t, size_t, size_t) except +
-    CachedScorerContext cached_normalized_hamming_init(    const proc_string&, int) except +
+    CachedScorerContext cached_normalized_levenshtein_init(const RapidFuzzString&, size_t, size_t, size_t) except +
+    CachedScorerContext cached_normalized_hamming_init(    const RapidFuzzString&) except +
 
     # distances
-    CachedDistanceContext cached_levenshtein_init(const proc_string&, int, size_t, size_t, size_t) except +
-    CachedDistanceContext cached_hamming_init(    const proc_string&, int) except +
+    CachedDistanceContext cached_levenshtein_init(const RapidFuzzString&, size_t, size_t, size_t) except +
+    CachedDistanceContext cached_hamming_init(    const RapidFuzzString&) except +
 
 
     ctypedef struct ExtractScorerComp:
@@ -105,15 +106,15 @@ cdef extern from "cpp_process.hpp":
         PyObject* key
 
 
-cdef inline CachedScorerContext CachedNormalizedLevenshteinInit(const proc_string& query, int def_process, dict kwargs):
+cdef inline CachedScorerContext CachedNormalizedLevenshteinInit(const RapidFuzzString& query, dict kwargs):
     cdef size_t insertion, deletion, substitution
     insertion, deletion, substitution = kwargs.get("weights", (1, 1, 1))
-    return move(cached_normalized_levenshtein_init(query, def_process, insertion, deletion, substitution))
+    return move(cached_normalized_levenshtein_init(query, insertion, deletion, substitution))
 
-cdef inline CachedDistanceContext CachedLevenshteinInit(const proc_string& query, int def_process, dict kwargs):
+cdef inline CachedDistanceContext CachedLevenshteinInit(const RapidFuzzString& query, dict kwargs):
     cdef size_t insertion, deletion, substitution
     insertion, deletion, substitution = kwargs.get("weights", (1, 1, 1))
-    return move(cached_levenshtein_init(query, def_process, insertion, deletion, substitution))
+    return move(cached_levenshtein_init(query, insertion, deletion, substitution))
 
 cdef inline int IsIntegratedScorer(object scorer):
     return (
@@ -137,48 +138,48 @@ cdef inline int IsIntegratedDistance(object scorer):
         scorer is hamming
     )
 
-cdef inline CachedScorerContext CachedScorerInit(object scorer, const proc_string& query, int def_process, dict kwargs):
+cdef inline CachedScorerContext CachedScorerInit(object scorer, const RapidFuzzString& query, dict kwargs):
     cdef CachedScorerContext context
 
     if scorer is ratio:
-        context = cached_ratio_init(query, def_process)
+        context = cached_ratio_init(query)
     elif scorer is partial_ratio:
-        context = cached_partial_ratio_init(query, def_process)
+        context = cached_partial_ratio_init(query)
     elif scorer is token_sort_ratio:
-        context = cached_token_sort_ratio_init(query, def_process)
+        context = cached_token_sort_ratio_init(query)
     elif scorer is token_set_ratio:
-        context = cached_token_set_ratio_init(query, def_process)
+        context = cached_token_set_ratio_init(query)
     elif scorer is token_ratio:
-        context = cached_token_ratio_init(query, def_process)
+        context = cached_token_ratio_init(query)
     elif scorer is partial_token_sort_ratio:
-        context = cached_partial_token_sort_ratio_init(query, def_process)
+        context = cached_partial_token_sort_ratio_init(query)
     elif scorer is partial_token_set_ratio:
-        context = cached_partial_token_set_ratio_init(query, def_process)
+        context = cached_partial_token_set_ratio_init(query)
     elif scorer is partial_token_ratio:
-        context = cached_partial_token_ratio_init(query, def_process)
+        context = cached_partial_token_ratio_init(query)
     elif scorer is WRatio:
-        context = cached_WRatio_init(query, def_process)
+        context = cached_WRatio_init(query)
     elif scorer is QRatio:
-        context = cached_QRatio_init(query, def_process)
+        context = cached_QRatio_init(query)
     elif scorer is normalized_levenshtein:
-        context = CachedNormalizedLevenshteinInit(query, def_process, kwargs)
+        context = CachedNormalizedLevenshteinInit(query, kwargs)
     elif scorer is normalized_hamming:
-        context = cached_normalized_hamming_init(query, def_process)
+        context = cached_normalized_hamming_init(query)
 
     return move(context)
 
-cdef inline CachedDistanceContext CachedDistanceInit(object scorer, const proc_string& query, int def_process, dict kwargs):
+cdef inline CachedDistanceContext CachedDistanceInit(object scorer, const RapidFuzzString& query, dict kwargs):
     cdef CachedDistanceContext context
 
     if scorer is levenshtein:
-        context = CachedLevenshteinInit(query, def_process, kwargs)
+        context = CachedLevenshteinInit(query, kwargs)
     elif scorer is hamming:
-        context = cached_hamming_init(query, def_process)
+        context = cached_hamming_init(query)
 
     return move(context)
 
 
-cdef inline extractOne_dict(CachedScorerContext context, choices, processor, double score_cutoff):
+cdef inline extractOne_dict(CachedScorerContext context, choices, processor, RapidFuzzProcess c_processor, double score_cutoff):
     """
     implementation of extractOne for:
       - type of choices = dict
@@ -199,7 +200,8 @@ cdef inline extractOne_dict(CachedScorerContext context, choices, processor, dou
             if proc_choice is None:
                 continue
 
-            score = context.ratio(conv_sequence(proc_choice), score_cutoff)
+            c_proc_choice = ProcStringWrapper(proc_choice, c_processor.process, c_processor.dealloc)
+            score = context.ratio(c_proc_choice.str, score_cutoff)
 
             if score >= score_cutoff and score > result_score:
                 result_score = score_cutoff = score
@@ -213,7 +215,8 @@ cdef inline extractOne_dict(CachedScorerContext context, choices, processor, dou
             if choice is None:
                 continue
             
-            score = context.ratio(conv_sequence(choice), score_cutoff)
+            c_proc_choice = ProcStringWrapper(choice, c_processor.process, c_processor.dealloc)
+            score = context.ratio(c_proc_choice.str, score_cutoff)
 
             if score >= score_cutoff and score > result_score:
                 result_score = score_cutoff = score
@@ -226,7 +229,7 @@ cdef inline extractOne_dict(CachedScorerContext context, choices, processor, dou
     return (result_choice, result_score, result_key) if result_choice is not None else None
 
 
-cdef inline extractOne_distance_dict(CachedDistanceContext context, choices, processor, size_t max_):
+cdef inline extractOne_distance_dict(CachedDistanceContext context, choices, processor, RapidFuzzProcess c_processor, size_t max_):
     """
     implementation of extractOne for:
       - type of choices = dict
@@ -242,11 +245,12 @@ cdef inline extractOne_distance_dict(CachedDistanceContext context, choices, pro
             if choice is None:
                 continue
 
+            c_proc_choice = ProcStringWrapper(proc_choice, c_processor.process, c_processor.dealloc)
             proc_choice = processor(choice)
             if proc_choice is None:
                 continue
 
-            distance = context.ratio(conv_sequence(proc_choice), max_)
+            distance = context.ratio(c_proc_choice.str, max_)
 
             if distance <= max_ and distance < result_distance:
                 result_distance = max_ = distance
@@ -260,7 +264,8 @@ cdef inline extractOne_distance_dict(CachedDistanceContext context, choices, pro
             if choice is None:
                 continue
 
-            distance = context.ratio(conv_sequence(choice), max_)
+            c_proc_choice = ProcStringWrapper(choice, c_processor.process, c_processor.dealloc)
+            distance = context.ratio(c_proc_choice.str, max_)
 
             if distance <= max_ and distance < result_distance:
                 result_distance = max_ = distance
@@ -273,7 +278,7 @@ cdef inline extractOne_distance_dict(CachedDistanceContext context, choices, pro
     return (result_choice, result_distance, result_key) if result_choice is not None else None
 
 
-cdef inline extractOne_list(CachedScorerContext context, choices, processor, double score_cutoff):
+cdef inline extractOne_list(CachedScorerContext context, choices, processor, RapidFuzzProcess c_processor, double score_cutoff):
     """
     implementation of extractOne for:
       - type of choices = list
@@ -291,11 +296,12 @@ cdef inline extractOne_list(CachedScorerContext context, choices, processor, dou
             if choice is None:
                 continue
 
+            c_proc_choice = ProcStringWrapper(proc_choice, c_processor.process, c_processor.dealloc)
             proc_choice = processor(choice)
             if proc_choice is None:
                 continue
 
-            score = context.ratio(conv_sequence(proc_choice), score_cutoff)
+            score = context.ratio(c_proc_choice.str, score_cutoff)
 
             if score >= score_cutoff and score > result_score:
                 result_score = score_cutoff = score
@@ -309,7 +315,8 @@ cdef inline extractOne_list(CachedScorerContext context, choices, processor, dou
             if choice is None:
                 continue
 
-            score = context.ratio(conv_sequence(choice), score_cutoff)
+            c_proc_choice = ProcStringWrapper(choice, c_processor.process, c_processor.dealloc)
+            score = context.ratio(c_proc_choice.str, score_cutoff)
 
             if score >= score_cutoff and score > result_score:
                 result_score = score_cutoff = score
@@ -322,7 +329,7 @@ cdef inline extractOne_list(CachedScorerContext context, choices, processor, dou
     return (result_choice, result_score, result_index) if result_choice is not None else None
 
 
-cdef inline extractOne_distance_list(CachedDistanceContext context, choices, processor, size_t max_):
+cdef inline extractOne_distance_list(CachedDistanceContext context, choices, RapidFuzzProcess c_processor, processor, size_t max_):
     """
     implementation of extractOne for:
       - type of choices = list
@@ -343,7 +350,8 @@ cdef inline extractOne_distance_list(CachedDistanceContext context, choices, pro
             if proc_choice is None:
                 continue
 
-            distance = context.ratio(conv_sequence(proc_choice), max_)
+            c_proc_choice = ProcStringWrapper(proc_choice, c_processor.process, c_processor.dealloc)
+            distance = context.ratio(c_proc_choice.str, max_)
 
             if distance <= max_ and distance < result_distance:
                 result_distance = max_ = distance
@@ -357,7 +365,8 @@ cdef inline extractOne_distance_list(CachedDistanceContext context, choices, pro
             if choice is None:
                 continue
 
-            distance = context.ratio(conv_sequence(choice), max_)
+            c_proc_choice = ProcStringWrapper(choice, c_processor.process, c_processor.dealloc)
+            distance = context.ratio(c_proc_choice.str, max_)
 
             if distance <= max_ and distance < result_distance:
                 result_distance = max_ = distance
@@ -376,6 +385,9 @@ cdef inline py_extractOne_dict(query, choices, scorer, processor, score_cutoff, 
     result_key = None
 
     if processor is not None:
+        query = processor(query)
+        if query is None:
+            return None
         for choice_key, choice in choices.items():
             if choice is None:
                 continue
@@ -418,6 +430,9 @@ cdef inline py_extractOne_list(query, choices, scorer, processor, double score_c
     result_choice = None
 
     if processor is not None:
+        query = processor(query)
+        if query is None:
+            return None
         for i, choice in enumerate(choices):
             if choice is None:
                 continue
@@ -571,19 +586,17 @@ def extractOne(query, choices, scorer=WRatio, processor=default_process, score_c
     None
 
     """
-
-    cdef int def_process = 0
     cdef CachedScorerContext ScorerContext
     cdef CachedDistanceContext DistanceContext
     cdef double c_score_cutoff = 0.0
     cdef size_t c_max = <size_t>-1
+    c_processor = getProcessor(processor)
 
     if query is None:
         return None
 
     # preprocess the query
     if processor is default_process:
-        def_process = 1
         # since this call is only performed once it is not very expensive to
         # make it in Python
         query = processor(query)
@@ -591,7 +604,6 @@ def extractOne(query, choices, scorer=WRatio, processor=default_process, score_c
     elif callable(processor):
         query = processor(query)
     elif processor:
-        def_process = 1
         # since this call is only performed once it is not very expensive to
         # make it in Python
         query = default_process(query)
@@ -603,29 +615,41 @@ def extractOne(query, choices, scorer=WRatio, processor=default_process, score_c
     if IsIntegratedScorer(scorer):
         # directly use the C++ implementation if possible
         # normalized distance implemented in C++
-        query_context = conv_sequence(query)
-        ScorerContext = CachedScorerInit(scorer, query_context, def_process, kwargs)
+        if c_processor is None:
+            c_processor = NoProcess
+            if callable(processor):
+                query = processor(query)
+
+        proc_query = ProcStringWrapper(query, c_processor.process, c_processor.dealloc)
+
+        ScorerContext = CachedScorerInit(scorer, proc_query.str, kwargs)
         if score_cutoff is not None:
             c_score_cutoff = score_cutoff
         if c_score_cutoff < 0 or c_score_cutoff > 100:
             raise TypeError("score_cutoff has to be in the range of 0.0 - 100.0")
 
         if hasattr(choices, "items"):
-            return extractOne_dict(move(ScorerContext), choices, processor, c_score_cutoff)
+            return extractOne_dict(move(ScorerContext), choices, processor, c_processor, c_score_cutoff)
         else:
-            return extractOne_list(move(ScorerContext), choices, processor, c_score_cutoff)
+            return extractOne_list(move(ScorerContext), choices, processor, c_processor, c_score_cutoff)
     
     if IsIntegratedDistance(scorer):
         # distance implemented in C++
-        query_context = conv_sequence(query)
-        DistanceContext = CachedDistanceInit(scorer, query_context, def_process, kwargs)
+        if c_processor is None:
+            c_processor = NoProcess
+            if callable(processor):
+                query = processor(query)
+
+        proc_query = ProcStringWrapper(query, c_processor.process, c_processor.dealloc)
+
+        DistanceContext = CachedDistanceInit(scorer, proc_query.str, kwargs)
         if score_cutoff is not None and score_cutoff != -1:
             c_max = score_cutoff
 
         if hasattr(choices, "items"):
-            return extractOne_distance_dict(move(DistanceContext), choices, processor, c_max)
+            return extractOne_distance_dict(move(DistanceContext), choices, processor, c_processor, c_max)
         else:
-            return extractOne_distance_list(move(DistanceContext), choices, processor, c_max)
+            return extractOne_distance_list(move(DistanceContext), choices, processor, c_processor, c_max)
 
     # the scorer has to be called through Python
     if score_cutoff is not None:
@@ -636,7 +660,7 @@ def extractOne(query, choices, scorer=WRatio, processor=default_process, score_c
     else:
         return py_extractOne_list(query, choices, scorer, processor, c_score_cutoff, kwargs)
 
-
+'''
 cdef inline extract_dict(CachedScorerContext context, choices, processor, size_t limit, double score_cutoff):
     cdef double score = 0.0
     cdef size_t i
@@ -1026,7 +1050,7 @@ def extract(query, choices, scorer=WRatio, processor=default_process, limit=5, s
     if IsIntegratedScorer(scorer):
         # directly use the C++ implementation if possible
         query_context = conv_sequence(query)
-        ScorerContext = CachedScorerInit(scorer, query_context, def_process, kwargs)
+        ScorerContext = CachedScorerInit(scorer, query_context, kwargs)
         if score_cutoff is not None:
             c_score_cutoff = score_cutoff
         if c_score_cutoff < 0 or c_score_cutoff > 100:
@@ -1040,7 +1064,7 @@ def extract(query, choices, scorer=WRatio, processor=default_process, limit=5, s
     if IsIntegratedDistance(scorer):
         # distance implemented in C++
         query_context = conv_sequence(query)
-        DistanceContext = CachedDistanceInit(scorer, query_context, def_process, kwargs)
+        DistanceContext = CachedDistanceInit(scorer, query_context, kwargs)
         if score_cutoff is not None and score_cutoff != -1:
             c_max = score_cutoff
 
@@ -1329,7 +1353,7 @@ def extract_iter(query, choices, scorer=WRatio, processor=default_process, score
     if IsIntegratedScorer(scorer):
         # normalized distance implemented in C++
         query_context = conv_sequence(query)
-        ScorerContext = CachedScorerInit(scorer, query_context, def_process, kwargs)
+        ScorerContext = CachedScorerInit(scorer, query_context, kwargs)
         if score_cutoff is not None:
             c_score_cutoff = score_cutoff
         if c_score_cutoff < 0 or c_score_cutoff > 100:
@@ -1345,7 +1369,7 @@ def extract_iter(query, choices, scorer=WRatio, processor=default_process, score
     if IsIntegratedDistance(scorer):
         # distance implemented in C++
         query_context = conv_sequence(query)
-        DistanceContext = CachedDistanceInit(scorer, query_context, def_process, kwargs)
+        DistanceContext = CachedDistanceInit(scorer, query_context, kwargs)
         if score_cutoff is not None and score_cutoff != -1:
             c_max = score_cutoff
 
@@ -1364,3 +1388,4 @@ def extract_iter(query, choices, scorer=WRatio, processor=default_process, score
         yield from py_extract_iter_dict()
     else:
         yield from py_extract_iter_list()
+'''

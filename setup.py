@@ -49,6 +49,14 @@ class BuildExt(build_ext):
 
 ext_modules = [
     Extension(
+        name='rapidfuzz_typeinfo',
+        sources=[
+            'src/rapidfuzz_typeinfo.cpp',
+        ],
+        include_dirs=["src/rapidfuzz-cpp/"],
+        language='c++',
+    ),
+    Extension(
        name='rapidfuzz.cpp_process',
         sources=[
             'src/cpp_process.cpp',

@@ -3,17 +3,18 @@ from libc.stdlib cimport malloc, free
 from libc.stddef cimport wchar_t
 from libcpp.utility cimport move
 
+from cpython.object cimport PyObject
+
 cdef extern from "cpp_common.hpp":
-    cdef cppclass proc_string:
+    cdef struct RapidFuzzString:
         uint8_t kind
         uint8_t allocated
-        void* data
-        size_t length
-
-        proc_string()
+        void*   data
+        size_t  length
+        void*   context
 
     int is_valid_string(object py_str) except +
-    proc_string convert_string(object py_str)
+    RapidFuzzString convert_string(object py_str)
     void validate_string(object py_str, const char* err) except +
 
     int RAPIDFUZZ_UINT8
@@ -22,12 +23,26 @@ cdef extern from "cpp_common.hpp":
     int RAPIDFUZZ_UINT64
     int RAPIDFUZZ_INT64
 
+    ctypedef RapidFuzzString (*RapidFuzzPyObjectProcess)(object) except*
+    ctypedef void            (*RapidFuzzStringDealloc)(RapidFuzzString*) nogil
 
-cdef inline proc_string hash_array(arr) except *:
+    cdef cppclass ProcStringWrapper:
+       ProcStringWrapper()
+       ProcStringWrapper(object, RapidFuzzPyObjectProcess, RapidFuzzStringDealloc) except +
+
+       RapidFuzzString str
+       RapidFuzzStringDealloc dealloc
+
+#cdef class RapidFuzzProcess:
+#    cdef RapidFuzzPyObjectProcess process
+#    cdef RapidFuzzStringDealloc   dealloc
+
+cdef inline RapidFuzzString hash_array(arr) except *:
     # TODO on Cpython this does not require any copies
-    cdef proc_string s_proc
+    cdef RapidFuzzString s_proc
     cdef Py_UCS4 typecode = <Py_UCS4>arr.typecode
     s_proc.length = <size_t>len(arr)
+    s_proc.context = NULL
 
     s_proc.data = malloc(s_proc.length * sizeof(uint64_t))
 
@@ -73,9 +88,10 @@ cdef inline proc_string hash_array(arr) except *:
     return move(s_proc)
 
 
-cdef inline proc_string hash_sequence(seq) except *:
-    cdef proc_string s_proc
+cdef inline RapidFuzzString hash_sequence(seq) except *:
+    cdef RapidFuzzString s_proc
     s_proc.length = <size_t>len(seq)
+    s_proc.context = NULL
 
     s_proc.data = malloc(s_proc.length * sizeof(uint64_t))
 

@@ -2,29 +2,28 @@
 # cython: language_level=3
 # cython: binding=True
 
-from rapidfuzz.utils import default_process
-from cpp_common cimport proc_string, is_valid_string, convert_string, hash_array, hash_sequence
+from rapidfuzz.utils import default_process, no_process
+from cpp_common cimport is_valid_string, convert_string, hash_array, hash_sequence, RapidFuzzString, ProcStringWrapper
 from array import array
 from libcpp.utility cimport move
 
-cdef inline proc_string conv_sequence(seq) except *:
-    if is_valid_string(seq):
-        return move(convert_string(seq))
-    elif isinstance(seq, array):
-        return move(hash_array(seq))
-    else:
-        return move(hash_sequence(seq))
+from rapidfuzz_typeinfo cimport RapidFuzzProcess
 
 cdef extern from "cpp_scorer.hpp":
-    double normalized_levenshtein_no_process(      const proc_string&, const proc_string&, size_t, size_t, size_t, double) nogil except +
-    double normalized_levenshtein_default_process( const proc_string&, const proc_string&, size_t, size_t, size_t, double) nogil except +
-    double normalized_hamming_no_process(          const proc_string&, const proc_string&, double) nogil except +
-    double normalized_hamming_default_process(     const proc_string&, const proc_string&, double) nogil except +
+    double normalized_levenshtein_func(      const RapidFuzzString&, const RapidFuzzString&, size_t, size_t, size_t, double) nogil except +
+    double normalized_hamming_func(          const RapidFuzzString&, const RapidFuzzString&, double) nogil except +
 
-    object levenshtein_no_process(                 const proc_string&, const proc_string&, size_t, size_t, size_t, size_t) nogil except +
-    object levenshtein_default_process(            const proc_string&, const proc_string&, size_t, size_t, size_t, size_t) nogil except +
-    object hamming_no_process(                     const proc_string&, const proc_string&, size_t) nogil except +
-    object hamming_default_process(                const proc_string&, const proc_string&, size_t) nogil except +
+    object levenshtein_func(                 const RapidFuzzString&, const RapidFuzzString&, size_t, size_t, size_t, size_t) nogil except +
+    object hamming_func(                     const RapidFuzzString&, const RapidFuzzString&, size_t) nogil except +
+
+cdef RapidFuzzProcess DefaultProcess = default_process.__RapidFuzzProcess
+cdef RapidFuzzProcess NoProcess = no_process.__RapidFuzzProcess
+
+cdef RapidFuzzProcess getProcessor(processor):
+    if processor is True:
+        return DefaultProcess
+    else:
+        return getattr(processor, "__RapidFuzzProcess", None)
 
 def levenshtein(s1, s2, weights=(1,1,1), processor=None, max=None):
     """
@@ -198,14 +197,18 @@ def levenshtein(s1, s2, weights=(1,1,1), processor=None, max=None):
         insertion, deletion, substitution = weights
 
     cdef size_t c_max = <size_t>-1 if max is None else max
+    c_processor = getProcessor(processor)
 
-    if processor is True or processor == default_process:
-        return levenshtein_default_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_max)
-    elif callable(processor):
-        s1 = processor(s1)
-        s2 = processor(s2)
+    if c_processor is None:
+        c_processor = NoProcess
+        if callable(processor):
+            s1 = processor(s1)
+            s2 = processor(s2)
 
-    return levenshtein_no_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_max)
+    proc_s1 = ProcStringWrapper(s1, c_processor.process, c_processor.dealloc)
+    proc_s2 = ProcStringWrapper(s2, c_processor.process, c_processor.dealloc)
+
+    return levenshtein_func(proc_s1.str, proc_s2.str, insertion, deletion, substitution, c_max)
 
 
 def normalized_levenshtein(s1, s2, weights=(1,1,1), processor=None, score_cutoff=None):
@@ -302,14 +305,18 @@ def normalized_levenshtein(s1, s2, weights=(1,1,1), processor=None, score_cutoff
         insertion, deletion, substitution = weights
 
     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
+    c_processor = getProcessor(processor)
 
-    if processor is True or processor == default_process:
-        return normalized_levenshtein_default_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_score_cutoff)
-    elif callable(processor):
-        s1 = processor(s1)
-        s2 = processor(s2)
+    if c_processor is None:
+        c_processor = NoProcess
+        if callable(processor):
+            s1 = processor(s1)
+            s2 = processor(s2)
 
-    return normalized_levenshtein_no_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_score_cutoff)
+    proc_s1 = ProcStringWrapper(s1, c_processor.process, c_processor.dealloc)
+    proc_s2 = ProcStringWrapper(s2, c_processor.process, c_processor.dealloc)
+
+    return normalized_levenshtein_func(proc_s1.str, proc_s2.str, insertion, deletion, substitution, c_score_cutoff)
 
 
 def hamming(s1, s2, processor=None, max=None):
@@ -346,17 +353,22 @@ def hamming(s1, s2, processor=None, max=None):
         If s1 and s2 have a different length
     """
     cdef size_t c_max = <size_t>-1 if max is None else max
+    c_processor = getProcessor(processor)
 
     if s1 is None or s2 is None:
         return 0
 
-    if processor is True or processor == default_process:
-        return hamming_default_process(conv_sequence(s1), conv_sequence(s2), c_max)
-    elif callable(processor):
-        s1 = processor(s1)
-        s2 = processor(s2)
 
-    return hamming_no_process(conv_sequence(s1), conv_sequence(s2), c_max)
+    if c_processor is None:
+        c_processor = NoProcess
+        if callable(processor):
+            s1 = processor(s1)
+            s2 = processor(s2)
+
+    proc_s1 = ProcStringWrapper(s1, c_processor.process, c_processor.dealloc)
+    proc_s2 = ProcStringWrapper(s2, c_processor.process, c_processor.dealloc)
+
+    return hamming_func(proc_s1.str, proc_s2.str, c_max)
 
 
 def normalized_hamming(s1, s2, processor=None, score_cutoff=None):
@@ -393,14 +405,18 @@ def normalized_hamming(s1, s2, processor=None, score_cutoff=None):
     hamming : Hamming distance
     """
     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
+    c_processor = getProcessor(processor)
 
     if s1 is None or s2 is None:
         return 0
 
-    if processor is True or processor == default_process:
-        return normalized_hamming_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
-    elif callable(processor):
-        s1 = processor(s1)
-        s2 = processor(s2)
+    if c_processor is None:
+        c_processor = NoProcess
+        if callable(processor):
+            s1 = processor(s1)
+            s2 = processor(s2)
 
-    return normalized_hamming_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    proc_s1 = ProcStringWrapper(s1, c_processor.process, c_processor.dealloc)
+    proc_s2 = ProcStringWrapper(s2, c_processor.process, c_processor.dealloc)
+
+    return normalized_hamming_func(proc_s1.str, proc_s2.str, c_score_cutoff)

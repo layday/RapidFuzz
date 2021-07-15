@@ -26,62 +26,72 @@ private:
     char const* m_error;
 };
 
-struct proc_string {
+
+struct RapidFuzzString {
     uint8_t kind;
-    /* flag to specify whether the string has to be freed */
+    /* flag to specify whether the string is dynamically allocated*/
     uint8_t allocated;
-    void* data;
-    size_t length;
+    void*   data;
+    size_t  length;
+    /* context which can be used by implementations to stor additional data
+       like e.g. a pointer to a PyObject* */
+    void*   context;
+};
 
-    proc_string()
-      : kind(0), allocated(false), data(nullptr), length(0) {}
-    proc_string(uint8_t _kind, uint8_t _allocated, void* _data, size_t _length)
-      : kind(_kind), allocated(_allocated), data(_data), length(_length) {}
+/* todo further thoughts required for parallelism and array allocators which should probably use a memory pool */
+typedef RapidFuzzString (*RapidFuzzPyObjectProcess)(PyObject*);
+// RapidFuzzString (*RapidFuzzStringProcess)(RapidFuzzString);
+typedef void            (*RapidFuzzStringDealloc)(RapidFuzzString*);
 
-    proc_string(const proc_string&) = delete;
-    proc_string& operator=(const proc_string&) = delete;
+class ProcStringWrapper
+{
+public:
+    ProcStringWrapper()
+      : str({0, 0, nullptr, 0, nullptr}), dealloc(nullptr) {}
 
-    proc_string(proc_string&& other)
-     : kind(other.kind), allocated(other.allocated), data(other.data), length(other.length)
+    ProcStringWrapper(PyObject* py_str, RapidFuzzPyObjectProcess processor, RapidFuzzStringDealloc _dealloc)
     {
-        other.data = nullptr;
-        other.allocated = false;
+        dealloc = _dealloc;
+        str = processor(py_str);
     }
 
-    proc_string& operator=(proc_string&& other) {
-        if (&other != this) {
-            if (allocated) {
-                free(data);
-            }
-            kind = other.kind;
-            allocated = other.allocated;
-            data = other.data;
-            length = other.length;
+    ProcStringWrapper(const ProcStringWrapper&) = delete;
+    ProcStringWrapper& operator=(const ProcStringWrapper&) = delete;
 
-            other.data = nullptr;
-            other.allocated = false;
+    ProcStringWrapper(ProcStringWrapper&& other)
+     : str(other.str), dealloc(other.dealloc)
+    {
+        other.dealloc = nullptr;
+    }
+
+    ProcStringWrapper& operator=(ProcStringWrapper&& other) {
+        if (&other != this) {
+            if (dealloc)
+            {
+                dealloc(&str);
+            }
+            str = other.str;
+            other.dealloc = nullptr;
       }
       return *this;
     };
 
-    ~proc_string() {
-        if (allocated) {
-            free(data);
-        }
+    ~ProcStringWrapper()
+    {
+       if (dealloc)
+       {
+           dealloc(&str);
+       }
     }
+
+    RapidFuzzString str;
+    RapidFuzzStringDealloc dealloc;
 };
 
-
 template <typename T>
-static inline rapidfuzz::basic_string_view<T> no_process(const proc_string& s)
+static inline rapidfuzz::basic_string_view<T> to_string_view(const RapidFuzzString& s)
 {
     return rapidfuzz::basic_string_view<T>((T*)s.data, s.length);
-}
-
-template <typename T>
-static inline std::basic_string<T> default_process(const proc_string& s)
-{
-    return utils::default_process(no_process<T>(s));
 }
 
 static inline PyObject* dist_to_long(std::size_t dist)
@@ -146,7 +156,7 @@ static inline void validate_string(PyObject* py_str, const char* err)
 // Right now this can be called without the GIL, since the used Python API
 // is implemented using macros, which directly access the PyObject both in
 // CPython and PyPy. If this changes the multiprocessing module needs to be updated
-static inline proc_string convert_string(PyObject* py_str)
+static inline RapidFuzzString convert_string(PyObject* py_str)
 {
     RapidfuzzTypes kind;
     switch(PyUnicode_KIND(py_str)) {
@@ -161,97 +171,96 @@ static inline proc_string convert_string(PyObject* py_str)
       break;
     }
 
-    return proc_string(
+    return {
         static_cast<uint8_t>(kind),
         0,
         PyUnicode_DATA(py_str),
-        static_cast<std::size_t>(PyUnicode_GET_LENGTH(py_str))
-    );
+        static_cast<std::size_t>(PyUnicode_GET_LENGTH(py_str)),
+        nullptr
+    };
 }
 
 
 /* note that the arguments s1 and s2 are switched on purpose, so when calling
  * the macro in impl and impl_inner both s1 and s2 are processed
  *
- * GET_RATIO_FUNC MSVC_TUPLE and GET_PROCESSOR MSVC_TUPLE are used
+ * GET_RATIO_FUNC MSVC_TUPLE is used
  * to work around the utterly broken preprocessor in MSVC
  * in more recent versions a standard conformant preprocessor can be activated in MSVC using
  * a compiler flag: https://devblogs.microsoft.com/cppblog/msvc-preprocessor-progress-towards-conformance/
  * However until nobody uses the older versions of MSVC anymore this does not help ...
  */
-#define GET_RATIO_FUNC(RATIO_FUNC, PROCESSOR) RATIO_FUNC
-#define GET_PROCESSOR(RATIO_FUNC, PROCESSOR) PROCESSOR
+#define GET_RATIO_FUNC(RATIO_FUNC) RATIO_FUNC
 
-# define X_ENUM(KIND, TYPE, MSVC_TUPLE) \
-    case KIND: return GET_RATIO_FUNC MSVC_TUPLE  (s2, GET_PROCESSOR MSVC_TUPLE <TYPE>(s1), args...);
+# define X_ENUM(KIND, TYPE, RATIO_FUNC) \
+    case KIND: return RATIO_FUNC(s2, to_string_view<TYPE>(s1), args...);
+
 
 /* generate <ratio_name>_impl_inner_<processor> functions which are used internally
  * for normalized distances
  */
-#define RATIO_IMPL_INNER(RATIO, RATIO_FUNC, PROCESSOR)                                             \
+#define RATIO_IMPL_INNER(RATIO, RATIO_FUNC)                                             \
 template<typename Sentence, typename... Args>                                                      \
-double RATIO##_impl_inner_##PROCESSOR(const proc_string& s1, const Sentence& s2, Args... args)     \
+double RATIO##_impl_inner(const RapidFuzzString& s1, const Sentence& s2, Args... args)     \
 {                                                                                                  \
     switch(s1.kind){                                                                               \
-    LIST_OF_CASES(RATIO_FUNC, PROCESSOR)                                                           \
+    LIST_OF_CASES(RATIO_FUNC)                                                           \
     default:                                                                                       \
-       throw std::logic_error("Reached end of control flow in " #RATIO "_impl_inner_" #PROCESSOR); \
+       throw std::logic_error("Reached end of control flow in " #RATIO "_impl_inner"); \
     }                                                                                              \
 }
 
-/* generate <ratio_name>_impl_<processor> functions which are used internally
+/* generate <ratio_name>_impl functions which are used internally
  * for normalized distances
  */
-#define RATIO_IMPL(RATIO, RATIO_FUNC, PROCESSOR)                                             \
+#define RATIO_IMPL(RATIO, RATIO_FUNC)                                             \
 template<typename... Args>                                                                   \
-double RATIO##_impl_##PROCESSOR(const proc_string& s1, const proc_string& s2, Args... args)  \
+double RATIO##_impl(const RapidFuzzString& s1, const RapidFuzzString& s2, Args... args)  \
 {                                                                                            \
     switch(s1.kind){                                                                         \
-    LIST_OF_CASES(RATIO##_impl_inner_##PROCESSOR, PROCESSOR)                                 \
+    LIST_OF_CASES(RATIO##_impl_inner)                                 \
     default:                                                                                 \
-       throw std::logic_error("Reached end of control flow in " #RATIO "_impl_" #PROCESSOR); \
+       throw std::logic_error("Reached end of control flow in " #RATIO "_impl"); \
     }                                                                                        \
 }
 
 #define RATIO_IMPL_DEF(RATIO, RATIO_FUNC)            \
-RATIO_IMPL(      RATIO, RATIO_FUNC, default_process) \
-RATIO_IMPL_INNER(RATIO, RATIO_FUNC, default_process) \
-RATIO_IMPL(      RATIO, RATIO_FUNC, no_process)      \
-RATIO_IMPL_INNER(RATIO, RATIO_FUNC, no_process)
+RATIO_IMPL_INNER(RATIO, RATIO_FUNC) \
+RATIO_IMPL(      RATIO, RATIO_FUNC)
 
-/* generate <ratio_name>_impl_inner_<processor> functions which are used internally
+
+/* generate <ratio_name>_impl_inner functions which are used internally
  * for distances
  */
-#define DISTANCE_IMPL_INNER(RATIO, RATIO_FUNC, PROCESSOR)                                          \
+#define DISTANCE_IMPL_INNER(RATIO, RATIO_FUNC)                                          \
 template<typename Sentence, typename... Args>                                                      \
-size_t RATIO##_impl_inner_##PROCESSOR(const proc_string& s1, const Sentence& s2, Args... args)     \
+size_t RATIO##_impl_inner(const RapidFuzzString& s1, const Sentence& s2, Args... args)     \
 {                                                                                                  \
     switch(s1.kind){                                                                               \
-    LIST_OF_CASES(RATIO_FUNC, PROCESSOR)                                                           \
+    LIST_OF_CASES(RATIO_FUNC)                                                           \
     default:                                                                                       \
-       throw std::logic_error("Reached end of control flow in " #RATIO "_impl_inner_" #PROCESSOR); \
+       throw std::logic_error("Reached end of control flow in " #RATIO "_impl_inner"); \
     }                                                                                              \
 }
 
-/* generate <ratio_name>_impl_<processor> functions which are used internally
+/* generate <ratio_name>_impl functions which are used internally
  * for distances
  */
-#define DISTANCE_IMPL(RATIO, RATIO_FUNC, PROCESSOR)                                          \
+#define DISTANCE_IMPL(RATIO, RATIO_FUNC)                                          \
 template<typename... Args>                                                                   \
-size_t RATIO##_impl_##PROCESSOR(const proc_string& s1, const proc_string& s2, Args... args)  \
+size_t RATIO##_impl(const RapidFuzzString& s1, const RapidFuzzString& s2, Args... args)  \
 {                                                                                            \
     switch(s1.kind){                                                                         \
-    LIST_OF_CASES(RATIO##_impl_inner_##PROCESSOR, PROCESSOR)                                 \
+    LIST_OF_CASES(RATIO##_impl_inner)                                 \
     default:                                                                                 \
-       throw std::logic_error("Reached end of control flow in " #RATIO "_impl_" #PROCESSOR); \
+       throw std::logic_error("Reached end of control flow in " #RATIO "_impl"); \
     }                                                                                        \
 }
 
 #define DISTANCE_IMPL_DEF(RATIO, RATIO_FUNC)            \
-DISTANCE_IMPL(      RATIO, RATIO_FUNC, default_process) \
-DISTANCE_IMPL_INNER(RATIO, RATIO_FUNC, default_process) \
-DISTANCE_IMPL(      RATIO, RATIO_FUNC, no_process)      \
-DISTANCE_IMPL_INNER(RATIO, RATIO_FUNC, no_process)
+DISTANCE_IMPL_INNER(RATIO, RATIO_FUNC) \
+DISTANCE_IMPL(      RATIO, RATIO_FUNC)
+
 
 
 /* fuzz */
@@ -278,13 +287,9 @@ RATIO_IMPL_DEF(normalized_hamming,       string_metric::normalized_hamming)
  * which only takes a score_cutoff
  */
 #define SIMPLE_RATIO_DEF(RATIO)                                                     \
-double RATIO##_no_process(const proc_string& s1, const proc_string& s2, double score_cutoff)      \
+double RATIO##_func(const RapidFuzzString& s1, const RapidFuzzString& s2, double score_cutoff)      \
 {                                                                                   \
-    return RATIO##_impl_no_process(s1, s2, score_cutoff);                           \
-}                                                                                   \
-double RATIO##_default_process(const proc_string& s1, const proc_string& s2, double score_cutoff) \
-{                                                                                   \
-    return RATIO##_impl_default_process(s1, s2, score_cutoff);                      \
+    return RATIO##_impl(s1, s2, score_cutoff);                           \
 }
 
 
@@ -292,13 +297,8 @@ double RATIO##_default_process(const proc_string& s1, const proc_string& s2, dou
  * which only takes a max
  */
 #define SIMPLE_DISTANCE_DEF(RATIO)                                            \
-PyObject* RATIO##_no_process(const proc_string& s1, const proc_string& s2, size_t max)      \
+PyObject* RATIO##_func(const RapidFuzzString& s1, const RapidFuzzString& s2, size_t max)      \
 {                                                                             \
-    size_t result = RATIO##_impl_no_process(s1, s2, max); \
+    size_t result = RATIO##_impl(s1, s2, max); \
     return dist_to_long(result);                                                \
-}                                                                             \
-PyObject* RATIO##_default_process(const proc_string& s1, const proc_string& s2, size_t max) \
-{                                                                             \
-    size_t result = RATIO##_impl_default_process(s1, s2, max); \
-    return dist_to_long(result);                                              \
 }

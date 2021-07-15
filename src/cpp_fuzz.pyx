@@ -2,40 +2,34 @@
 # cython: language_level=3
 # cython: binding=True
 
-from rapidfuzz.utils import default_process
-from cpp_common cimport proc_string, is_valid_string, convert_string, hash_array, hash_sequence
+from rapidfuzz.utils import default_process, no_process
+from cpp_common cimport is_valid_string, convert_string, hash_array, hash_sequence, RapidFuzzString, ProcStringWrapper
 from array import array
 from libcpp.utility cimport move
 
-cdef inline proc_string conv_sequence(seq) except *:
-    if is_valid_string(seq):
-        return move(convert_string(seq))
-    elif isinstance(seq, array):
-        return move(hash_array(seq))
-    else:
-        return move(hash_sequence(seq))
+from rapidfuzz_typeinfo cimport RapidFuzzProcess
 
 cdef extern from "cpp_scorer.hpp":
-    double ratio_no_process(                         const proc_string&, const proc_string&, double) nogil except +
-    double ratio_default_process(                    const proc_string&, const proc_string&, double) nogil except +
-    double partial_ratio_no_process(                 const proc_string&, const proc_string&, double) nogil except +
-    double partial_ratio_default_process(            const proc_string&, const proc_string&, double) nogil except +
-    double token_sort_ratio_no_process(              const proc_string&, const proc_string&, double) nogil except +
-    double token_sort_ratio_default_process(         const proc_string&, const proc_string&, double) nogil except +
-    double token_set_ratio_no_process(               const proc_string&, const proc_string&, double) nogil except +
-    double token_set_ratio_default_process(          const proc_string&, const proc_string&, double) nogil except +
-    double token_ratio_no_process(                   const proc_string&, const proc_string&, double) nogil except +
-    double token_ratio_default_process(              const proc_string&, const proc_string&, double) nogil except +
-    double partial_token_sort_ratio_no_process(      const proc_string&, const proc_string&, double) nogil except +
-    double partial_token_sort_ratio_default_process( const proc_string&, const proc_string&, double) nogil except +
-    double partial_token_set_ratio_no_process(       const proc_string&, const proc_string&, double) nogil except +
-    double partial_token_set_ratio_default_process(  const proc_string&, const proc_string&, double) nogil except +
-    double partial_token_ratio_no_process(           const proc_string&, const proc_string&, double) nogil except +
-    double partial_token_ratio_default_process(      const proc_string&, const proc_string&, double) nogil except +
-    double WRatio_no_process(                        const proc_string&, const proc_string&, double) nogil except +
-    double WRatio_default_process(                   const proc_string&, const proc_string&, double) nogil except +
-    double QRatio_no_process(                        const proc_string&, const proc_string&, double) nogil except +
-    double QRatio_default_process(                   const proc_string&, const proc_string&, double) nogil except +
+    double ratio_func(                    const RapidFuzzString&, const RapidFuzzString&, double) nogil except +
+    double partial_ratio_func(            const RapidFuzzString&, const RapidFuzzString&, double) nogil except +
+    double token_sort_ratio_func(         const RapidFuzzString&, const RapidFuzzString&, double) nogil except +
+    double token_set_ratio_func(          const RapidFuzzString&, const RapidFuzzString&, double) nogil except +
+    double token_ratio_func(              const RapidFuzzString&, const RapidFuzzString&, double) nogil except +
+    double partial_token_sort_ratio_func( const RapidFuzzString&, const RapidFuzzString&, double) nogil except +
+    double partial_token_set_ratio_func(  const RapidFuzzString&, const RapidFuzzString&, double) nogil except +
+    double partial_token_ratio_func(      const RapidFuzzString&, const RapidFuzzString&, double) nogil except +
+    double partial_token_ratio_func(      const RapidFuzzString&, const RapidFuzzString&, double) nogil except +
+    double WRatio_func(                   const RapidFuzzString&, const RapidFuzzString&, double) nogil except +
+    double QRatio_func(                   const RapidFuzzString&, const RapidFuzzString&, double) nogil except +
+
+cdef RapidFuzzProcess DefaultProcess = default_process.__RapidFuzzProcess
+cdef RapidFuzzProcess NoProcess = no_process.__RapidFuzzProcess
+
+cdef RapidFuzzProcess getProcessor(processor):
+    if processor is True:
+        return DefaultProcess
+    else:
+        return getattr(processor, "__RapidFuzzProcess", None)
 
 def ratio(s1, s2, processor=None, score_cutoff=None):
     """
@@ -73,17 +67,21 @@ def ratio(s1, s2, processor=None, score_cutoff=None):
     96.55171966552734
     """
     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
+    c_processor = getProcessor(processor)
 
     if s1 is None or s2 is None:
         return 0
+    
+    if c_processor is None:
+        c_processor = NoProcess
+        if callable(processor):
+            s1 = processor(s1)
+            s2 = processor(s2)
 
-    if processor is True or processor == default_process:
-        return ratio_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
-    elif callable(processor):
-        s1 = processor(s1)
-        s2 = processor(s2)
+    proc_s1 = ProcStringWrapper(s1, c_processor.process, c_processor.dealloc)
+    proc_s2 = ProcStringWrapper(s2, c_processor.process, c_processor.dealloc)
 
-    return ratio_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    return ratio_func(proc_s1.str, proc_s2.str, c_score_cutoff)
 
 
 def partial_ratio(s1, s2, processor=None, score_cutoff=None):
@@ -120,18 +118,21 @@ def partial_ratio(s1, s2, processor=None, score_cutoff=None):
     100.0
     """
     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
+    c_processor = getProcessor(processor)
 
     if s1 is None or s2 is None:
         return 0
 
-    if processor is True or processor == default_process:
-        return partial_ratio_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
-    elif callable(processor):
-        s1 = processor(s1)
-        s2 = processor(s2)
+    if c_processor is None:
+        c_processor = NoProcess
+        if callable(processor):
+            s1 = processor(s1)
+            s2 = processor(s2)
 
-    return partial_ratio_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    proc_s1 = ProcStringWrapper(s1, c_processor.process, c_processor.dealloc)
+    proc_s2 = ProcStringWrapper(s2, c_processor.process, c_processor.dealloc)
 
+    return partial_ratio_func(proc_s1.str, proc_s2.str, c_score_cutoff)
 
 def token_sort_ratio(s1, s2, processor=True, score_cutoff=None):
     """
@@ -167,17 +168,21 @@ def token_sort_ratio(s1, s2, processor=True, score_cutoff=None):
     100.0
     """
     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
+    c_processor = getProcessor(processor)
 
     if s1 is None or s2 is None:
         return 0
 
-    if processor is True or processor == default_process:
-        return token_sort_ratio_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
-    elif callable(processor):
-        s1 = processor(s1)
-        s2 = processor(s2)
+    if c_processor is None:
+        c_processor = NoProcess
+        if callable(processor):
+            s1 = processor(s1)
+            s2 = processor(s2)
 
-    return token_sort_ratio_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    proc_s1 = ProcStringWrapper(s1, c_processor.process, c_processor.dealloc)
+    proc_s2 = ProcStringWrapper(s2, c_processor.process, c_processor.dealloc)
+
+    return token_sort_ratio_func(proc_s1.str, proc_s2.str, c_score_cutoff)
 
 
 def token_set_ratio(s1, s2, processor=True, score_cutoff=None):
@@ -217,17 +222,21 @@ def token_set_ratio(s1, s2, processor=True, score_cutoff=None):
     100.0
     """
     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
+    c_processor = getProcessor(processor)
 
     if s1 is None or s2 is None:
         return 0
 
-    if processor is True or processor == default_process:
-        return token_set_ratio_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
-    elif callable(processor):
-        s1 = processor(s1)
-        s2 = processor(s2)
+    if c_processor is None:
+        c_processor = NoProcess
+        if callable(processor):
+            s1 = processor(s1)
+            s2 = processor(s2)
 
-    return token_set_ratio_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    proc_s1 = ProcStringWrapper(s1, c_processor.process, c_processor.dealloc)
+    proc_s2 = ProcStringWrapper(s2, c_processor.process, c_processor.dealloc)
+
+    return token_set_ratio_func(proc_s1.str, proc_s2.str, c_score_cutoff)
 
 
 def token_ratio(s1, s2, processor=True, score_cutoff=None):
@@ -260,17 +269,21 @@ def token_ratio(s1, s2, processor=True, score_cutoff=None):
     .. image:: img/token_ratio.svg
     """
     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
+    c_processor = getProcessor(processor)
 
     if s1 is None or s2 is None:
         return 0
 
-    if processor is True or processor == default_process:
-        return token_ratio_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
-    elif callable(processor):
-        s1 = processor(s1)
-        s2 = processor(s2)
+    if c_processor is None:
+        c_processor = NoProcess
+        if callable(processor):
+            s1 = processor(s1)
+            s2 = processor(s2)
 
-    return token_ratio_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    proc_s1 = ProcStringWrapper(s1, c_processor.process, c_processor.dealloc)
+    proc_s2 = ProcStringWrapper(s2, c_processor.process, c_processor.dealloc)
+
+    return token_ratio_func(proc_s1.str, proc_s2.str, c_score_cutoff)
 
 
 def partial_token_sort_ratio(s1, s2, processor=True, score_cutoff=None):
@@ -302,17 +315,21 @@ def partial_token_sort_ratio(s1, s2, processor=True, score_cutoff=None):
     .. image:: img/partial_token_sort_ratio.svg
     """
     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
+    c_processor = getProcessor(processor)
 
     if s1 is None or s2 is None:
         return 0
 
-    if processor is True or processor == default_process:
-        return partial_token_sort_ratio_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
-    elif callable(processor):
-        s1 = processor(s1)
-        s2 = processor(s2)
+    if c_processor is None:
+        c_processor = NoProcess
+        if callable(processor):
+            s1 = processor(s1)
+            s2 = processor(s2)
 
-    return partial_token_sort_ratio_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    proc_s1 = ProcStringWrapper(s1, c_processor.process, c_processor.dealloc)
+    proc_s2 = ProcStringWrapper(s2, c_processor.process, c_processor.dealloc)
+
+    return partial_token_sort_ratio_func(proc_s1.str, proc_s2.str, c_score_cutoff)
 
 
 def partial_token_set_ratio(s1, s2, processor=True, score_cutoff=None):
@@ -345,17 +362,21 @@ def partial_token_set_ratio(s1, s2, processor=True, score_cutoff=None):
     .. image:: img/partial_token_set_ratio.svg
     """
     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
+    c_processor = getProcessor(processor)
 
     if s1 is None or s2 is None:
         return 0
 
-    if processor is True or processor == default_process:
-        return partial_token_set_ratio_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
-    elif callable(processor):
-        s1 = processor(s1)
-        s2 = processor(s2)
+    if c_processor is None:
+        c_processor = NoProcess
+        if callable(processor):
+            s1 = processor(s1)
+            s2 = processor(s2)
 
-    return partial_token_set_ratio_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    proc_s1 = ProcStringWrapper(s1, c_processor.process, c_processor.dealloc)
+    proc_s2 = ProcStringWrapper(s2, c_processor.process, c_processor.dealloc)
+
+    return partial_token_set_ratio_func(proc_s1.str, proc_s2.str, c_score_cutoff)
 
 
 def partial_token_ratio(s1, s2, processor=True, score_cutoff=None):
@@ -388,17 +409,21 @@ def partial_token_ratio(s1, s2, processor=True, score_cutoff=None):
     .. image:: img/partial_token_ratio.svg
     """
     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
+    c_processor = getProcessor(processor)
 
     if s1 is None or s2 is None:
         return 0
 
-    if processor is True or processor == default_process:
-        return partial_token_ratio_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
-    elif callable(processor):
-        s1 = processor(s1)
-        s2 = processor(s2)
+    if c_processor is None:
+        c_processor = NoProcess
+        if callable(processor):
+            s1 = processor(s1)
+            s2 = processor(s2)
 
-    return partial_token_ratio_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    proc_s1 = ProcStringWrapper(s1, c_processor.process, c_processor.dealloc)
+    proc_s2 = ProcStringWrapper(s2, c_processor.process, c_processor.dealloc)
+
+    return partial_token_ratio_func(proc_s1.str, proc_s2.str, c_score_cutoff)
 
 
 def WRatio(s1, s2, processor=True, score_cutoff=None):
@@ -430,17 +455,21 @@ def WRatio(s1, s2, processor=True, score_cutoff=None):
     .. image:: img/WRatio.svg
     """
     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
+    c_processor = getProcessor(processor)
 
     if s1 is None or s2 is None:
         return 0
 
-    if processor is True or processor == default_process:
-        return WRatio_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
-    elif callable(processor):
-        s1 = processor(s1)
-        s2 = processor(s2)
+    if c_processor is None:
+        c_processor = NoProcess
+        if callable(processor):
+            s1 = processor(s1)
+            s2 = processor(s2)
 
-    return WRatio_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    proc_s1 = ProcStringWrapper(s1, c_processor.process, c_processor.dealloc)
+    proc_s2 = ProcStringWrapper(s2, c_processor.process, c_processor.dealloc)
+
+    return WRatio_func(proc_s1.str, proc_s2.str, c_score_cutoff)
 
 
 def QRatio(s1, s2, processor=True, score_cutoff=None):
@@ -475,14 +504,18 @@ def QRatio(s1, s2, processor=True, score_cutoff=None):
     100.0
     """
     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
+    c_processor = getProcessor(processor)
 
     if s1 is None or s2 is None:
         return 0
 
-    if processor is True or processor == default_process:
-        return QRatio_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
-    elif callable(processor):
-        s1 = processor(s1)
-        s2 = processor(s2)
+    if c_processor is None:
+        c_processor = NoProcess
+        if callable(processor):
+            s1 = processor(s1)
+            s2 = processor(s2)
 
-    return QRatio_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    proc_s1 = ProcStringWrapper(s1, c_processor.process, c_processor.dealloc)
+    proc_s2 = ProcStringWrapper(s2, c_processor.process, c_processor.dealloc)
+
+    return QRatio_func(proc_s1.str, proc_s2.str, c_score_cutoff)

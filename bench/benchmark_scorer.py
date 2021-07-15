@@ -4,6 +4,7 @@ from timeit import timeit
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
+from rapidfuzz import utils#process, utils
 
 import string
 
@@ -40,7 +41,7 @@ def get_platform():
     return 'Python %s on %s (%s)' % (pyver, uname.system, uname.machine)
 
 def benchmark():
-    words = [''.join(random.choice(string.ascii_letters + string.digits) for _ in range(10)) for _ in range(10000)]
+    words = [''.join(random.choice(string.ascii_letters + string.digits) for _ in range(30)) for _ in range(10000)]
     sample_rate = len(words) // 100
     sample = words[::sample_rate]
 
@@ -109,7 +110,7 @@ def benchmark():
     autolabel(rects1)
     autolabel(rects2)
     fig.tight_layout()
-    plt.show()
+    #plt.show()
 
 
 if __name__ == '__main__':
