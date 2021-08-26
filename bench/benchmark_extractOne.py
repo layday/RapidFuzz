@@ -29,13 +29,13 @@ PROCESSOR = {
 
 LIBRARIES = (
     "ratio",
-    "partial_ratio",
-    "token_sort_ratio",
-    "token_set_ratio",
-    "partial_token_sort_ratio",
-    "partial_token_set_ratio",
+    #"partial_ratio",
+    #"token_sort_ratio",
+    #"token_set_ratio",
+    #"partial_token_sort_ratio",
+    #"partial_token_set_ratio",
     "QRatio",
-    "WRatio",
+    #"WRatio",
 )
 
 def load_func(target):
@@ -51,8 +51,8 @@ def get_platform():
     return 'Python %s on %s (%s)' % (pyver, uname.system, uname.machine)
 
 def benchmark():
-    words = [''.join(random.choice(string.ascii_letters + string.digits) for _ in range(10)) for _ in range(10000)]
-    sample_rate = len(words) // 100
+    words = [''.join(random.choice(string.ascii_letters + string.digits) for _ in range(20)) for _ in range(1000)]
+    sample_rate = len(words) // 1000
     sample = words[::sample_rate]
     total = len(words) * len(sample)
 
@@ -64,7 +64,7 @@ def benchmark():
     def wrap(f, scorer, processor):
         def func():
             if not processor:
-                return len([f(x, words, scorer=scorer, processor=None) for x in sample])
+                return len([f(x, words, scorer=scorer, processor=True) for x in sample])
             return len([f(x, words, scorer=scorer) for x in sample])
         return func
 
@@ -77,7 +77,7 @@ def benchmark():
     for target in LIBRARIES:
         func = load_func("fuzzywuzzy.process.extractOne")
         scorer = load_func("fuzzywuzzy.fuzz." + target)
-        sec = timeit('func()', globals={'func': wrap(func, scorer, PROCESSOR[target])}, number=1)
+        sec = 1000#timeit('func()', globals={'func': wrap(func, scorer, PROCESSOR[target])}, number=1)
         calls = total / sec
         fuzz.append(calls)
 

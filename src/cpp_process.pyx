@@ -49,6 +49,8 @@ cdef inline proc_string conv_sequence(seq) except *:
         return move(hash_sequence(seq))
 
 cdef extern from "cpp_process.hpp":
+    proc_string default_process_(const proc_string& s) except +
+
     cdef cppclass CachedScorerContext:
         CachedScorerContext()
         double ratio(const proc_string&, double) except +
@@ -288,7 +290,7 @@ cdef inline extractOne_distance_dict(CachedDistanceContext context, choices, pro
     return (result_choice, result_distance, result_key) if result_choice is not None else None
 
 
-cdef inline extractOne_list(CachedScorerContext context, choices, processor, double score_cutoff):
+cdef inline extractOne_list(CachedScorerContext context, choices, processor, double score_cutoff, int def_process):
     """
     implementation of extractOne for:
       - type of choices = list
@@ -324,7 +326,10 @@ cdef inline extractOne_list(CachedScorerContext context, choices, processor, dou
             if choice is None:
                 continue
 
-            score = context.ratio(conv_sequence(choice), score_cutoff)
+            if def_process:
+                score = context.ratio(default_process_(conv_sequence(choice)), score_cutoff)
+            else:
+                score = context.ratio(conv_sequence(choice), score_cutoff)
 
             if score >= score_cutoff and score > result_score:
                 result_score = score_cutoff = score
@@ -619,7 +624,7 @@ def extractOne(query, choices, *, scorer=WRatio, processor=default_process, scor
         # directly use the C++ implementation if possible
         # normalized distance implemented in C++
         query_context = conv_sequence(query)
-        ScorerContext = CachedScorerInit(scorer, query_context, def_process, kwargs)
+        ScorerContext = CachedScorerInit(scorer, query_context, 0, kwargs) # 0, kwargs) #def_process, kwargs)
         if score_cutoff is not None:
             c_score_cutoff = score_cutoff
         if c_score_cutoff < 0 or c_score_cutoff > 100:
@@ -628,7 +633,7 @@ def extractOne(query, choices, *, scorer=WRatio, processor=default_process, scor
         if hasattr(choices, "items"):
             return extractOne_dict(move(ScorerContext), choices, processor, c_score_cutoff)
         else:
-            return extractOne_list(move(ScorerContext), choices, processor, c_score_cutoff)
+            return extractOne_list(move(ScorerContext), choices, processor, c_score_cutoff, def_process)
     
     if IsIntegratedDistance(scorer):
         # distance implemented in C++

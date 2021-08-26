@@ -31,22 +31,17 @@ cdef extern from "cpp_scorer.hpp" namespace "rapidfuzz" nogil:
         size_t dest_pos
 
 cdef extern from "cpp_scorer.hpp":
-    double normalized_levenshtein_no_process(       const proc_string&, const proc_string&, size_t, size_t, size_t, double) nogil except +
-    double normalized_levenshtein_default_process(  const proc_string&, const proc_string&, size_t, size_t, size_t, double) nogil except +
-    double normalized_hamming_no_process(           const proc_string&, const proc_string&, double) nogil except +
-    double normalized_hamming_default_process(      const proc_string&, const proc_string&, double) nogil except +
-    double jaro_similarity_no_process(              const proc_string&, const proc_string&, double) nogil except +
-    double jaro_similarity_default_process(         const proc_string&, const proc_string&, double) nogil except +
-    double jaro_winkler_similarity_no_process(      const proc_string&, const proc_string&, double, double) nogil except +
-    double jaro_winkler_similarity_default_process( const proc_string&, const proc_string&, double, double) nogil except +
+    proc_string default_process_(const proc_string& s) except +
 
-    object levenshtein_no_process(                  const proc_string&, const proc_string&, size_t, size_t, size_t, size_t) nogil except +
-    object levenshtein_default_process(             const proc_string&, const proc_string&, size_t, size_t, size_t, size_t) nogil except +
-    object hamming_no_process(                      const proc_string&, const proc_string&, size_t) nogil except +
-    object hamming_default_process(                 const proc_string&, const proc_string&, size_t) nogil except +
+    double cpp_normalized_levenshtein(  const proc_string&, const proc_string&, size_t, size_t, size_t, double) nogil except +
+    double cpp_normalized_hamming(      const proc_string&, const proc_string&, double) nogil except +
+    double cpp_jaro_similarity(         const proc_string&, const proc_string&, double) nogil except +
+    double cpp_jaro_winkler_similarity( const proc_string&, const proc_string&, double, double) nogil except +
 
-    vector[LevenshteinEditOp] levenshtein_editops_no_process(     const proc_string& s1, const proc_string& s2) nogil except +
-    vector[LevenshteinEditOp] levenshtein_editops_default_process(const proc_string& s1, const proc_string& s2) nogil except +
+    object cpp_levenshtein(             const proc_string&, const proc_string&, size_t, size_t, size_t, size_t) nogil except +
+    object cpp_hamming(                 const proc_string&, const proc_string&, size_t) nogil except +
+
+    vector[LevenshteinEditOp] cpp_levenshtein_editops(     const proc_string& s1, const proc_string& s2) nogil except +
 
 def levenshtein(s1, s2, *, weights=(1,1,1), processor=None, max=None):
     """
@@ -222,12 +217,18 @@ def levenshtein(s1, s2, *, weights=(1,1,1), processor=None, max=None):
     cdef size_t c_max = <size_t>-1 if max is None else max
 
     if processor is True or processor == default_process:
-        return levenshtein_default_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_max)
+        s1_proc = default_process_(conv_sequence(s1))
+        s2_proc = default_process_(conv_sequence(s2))
     elif callable(processor):
         s1 = processor(s1)
         s2 = processor(s2)
+        s1_proc = conv_sequence(s1)
+        s2_proc = conv_sequence(s2)
+    else:
+        s1_proc = conv_sequence(s1)
+        s2_proc = conv_sequence(s2)
 
-    return levenshtein_no_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_max)
+    return cpp_levenshtein(s1_proc, s2_proc, insertion, deletion, substitution, c_max)
 
 cdef str levenshtein_edit_type_to_str(LevenshteinEditType edit_type):
     if edit_type == LevenshteinEditType.Insert:
@@ -284,16 +285,18 @@ def levenshtein_editops(s1, s2, *, processor=None):
      insert s1[6] s2[6]
     """
     if processor is True or processor == default_process:
-        return levenshtein_editops_to_list(
-            levenshtein_editops_default_process(conv_sequence(s1), conv_sequence(s2))
-        )
+        s1_proc = default_process_(conv_sequence(s1))
+        s2_proc = default_process_(conv_sequence(s2))
     elif callable(processor):
         s1 = processor(s1)
         s2 = processor(s2)
+        s1_proc = conv_sequence(s1)
+        s2_proc = conv_sequence(s2)
+    else:
+        s1_proc = conv_sequence(s1)
+        s2_proc = conv_sequence(s2)
 
-    return levenshtein_editops_to_list(
-        levenshtein_editops_no_process(conv_sequence(s1), conv_sequence(s2))
-    )
+    return levenshtein_editops_to_list(cpp_levenshtein_editops(s1_proc, s2_proc))
 
 def normalized_levenshtein(s1, s2, *, weights=(1,1,1), processor=None, score_cutoff=None):
     """
@@ -391,12 +394,18 @@ def normalized_levenshtein(s1, s2, *, weights=(1,1,1), processor=None, score_cut
     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
 
     if processor is True or processor == default_process:
-        return normalized_levenshtein_default_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_score_cutoff)
+        s1_proc = default_process_(conv_sequence(s1))
+        s2_proc = default_process_(conv_sequence(s2))
     elif callable(processor):
         s1 = processor(s1)
         s2 = processor(s2)
+        s1_proc = conv_sequence(s1)
+        s2_proc = conv_sequence(s2)
+    else:
+        s1_proc = conv_sequence(s1)
+        s2_proc = conv_sequence(s2)
 
-    return normalized_levenshtein_no_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_score_cutoff)
+    return cpp_normalized_levenshtein(s1_proc, s2_proc, insertion, deletion, substitution, c_score_cutoff)
 
 
 def hamming(s1, s2, *, processor=None, max=None):
@@ -438,12 +447,18 @@ def hamming(s1, s2, *, processor=None, max=None):
         return 0
 
     if processor is True or processor == default_process:
-        return hamming_default_process(conv_sequence(s1), conv_sequence(s2), c_max)
+        s1_proc = default_process_(conv_sequence(s1))
+        s2_proc = default_process_(conv_sequence(s2))
     elif callable(processor):
         s1 = processor(s1)
         s2 = processor(s2)
+        s1_proc = conv_sequence(s1)
+        s2_proc = conv_sequence(s2)
+    else:
+        s1_proc = conv_sequence(s1)
+        s2_proc = conv_sequence(s2)
 
-    return hamming_no_process(conv_sequence(s1), conv_sequence(s2), c_max)
+    return cpp_hamming(s1_proc, s2_proc, c_max)
 
 
 def normalized_hamming(s1, s2, *, processor=None, score_cutoff=None):
@@ -485,12 +500,18 @@ def normalized_hamming(s1, s2, *, processor=None, score_cutoff=None):
         return 0
 
     if processor is True or processor == default_process:
-        return normalized_hamming_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+        s1_proc = default_process_(conv_sequence(s1))
+        s2_proc = default_process_(conv_sequence(s2))
     elif callable(processor):
         s1 = processor(s1)
         s2 = processor(s2)
+        s1_proc = conv_sequence(s1)
+        s2_proc = conv_sequence(s2)
+    else:
+        s1_proc = conv_sequence(s1)
+        s2_proc = conv_sequence(s2)
 
-    return normalized_hamming_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    return cpp_normalized_hamming(s1_proc, s2_proc, c_score_cutoff)
 
 
 def jaro_similarity(s1, s2, *, processor=None, score_cutoff=None):
@@ -524,12 +545,18 @@ def jaro_similarity(s1, s2, *, processor=None, score_cutoff=None):
         return 0
 
     if processor is True or processor == default_process:
-        return jaro_similarity_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+        s1_proc = default_process_(conv_sequence(s1))
+        s2_proc = default_process_(conv_sequence(s2))
     elif callable(processor):
         s1 = processor(s1)
         s2 = processor(s2)
+        s1_proc = conv_sequence(s1)
+        s2_proc = conv_sequence(s2)
+    else:
+        s1_proc = conv_sequence(s1)
+        s2_proc = conv_sequence(s2)
 
-    return jaro_similarity_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    return cpp_jaro_similarity(s1_proc, s2_proc, c_score_cutoff)
 
 
 def jaro_winkler_similarity(s1, s2, *, double prefix_weight=0.1, processor=None, score_cutoff=None):
@@ -570,9 +597,15 @@ def jaro_winkler_similarity(s1, s2, *, double prefix_weight=0.1, processor=None,
         return 0
 
     if processor is True or processor == default_process:
-        return jaro_winkler_similarity_default_process(conv_sequence(s1), conv_sequence(s2), prefix_weight, c_score_cutoff)
+        s1_proc = default_process_(conv_sequence(s1))
+        s2_proc = default_process_(conv_sequence(s2))
     elif callable(processor):
         s1 = processor(s1)
         s2 = processor(s2)
+        s1_proc = conv_sequence(s1)
+        s2_proc = conv_sequence(s2)
+    else:
+        s1_proc = conv_sequence(s1)
+        s2_proc = conv_sequence(s2)
 
-    return jaro_winkler_similarity_no_process(conv_sequence(s1), conv_sequence(s2), prefix_weight, c_score_cutoff)
+    return cpp_jaro_winkler_similarity(s1_proc, s2_proc, prefix_weight, c_score_cutoff)

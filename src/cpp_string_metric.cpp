@@ -1992,6 +1992,8 @@ static const char __pyx_k_members[] = "__members__";
 static const char __pyx_k_parents[] = "parents";
 static const char __pyx_k_prepare[] = "__prepare__";
 static const char __pyx_k_replace[] = "replace";
+static const char __pyx_k_s1_proc[] = "s1_proc";
+static const char __pyx_k_s2_proc[] = "s2_proc";
 static const char __pyx_k_weights[] = "weights";
 static const char __pyx_k_EnumBase[] = "EnumBase";
 static const char __pyx_k_deletion[] = "deletion";
@@ -2041,19 +2043,19 @@ static const char __pyx_k_normalized_hamming[] = "normalized_hamming";
 static const char __pyx_k_LevenshteinEditType[] = "LevenshteinEditType";
 static const char __pyx_k_Pyx_EnumBase___repr[] = "__Pyx_EnumBase.__repr__";
 static const char __pyx_k_levenshtein_editops[] = "levenshtein_editops";
-static const char __pyx_k_levenshtein_line_51[] = "levenshtein (line 51)";
+static const char __pyx_k_levenshtein_line_46[] = "levenshtein (line 46)";
 static const char __pyx_k_Unknown_enum_value_s[] = "Unknown enum value: '%s'";
 static const char __pyx_k_cpp_string_metric_pyx[] = "cpp_string_metric.pyx";
 static const char __pyx_k_normalized_levenshtein[] = "normalized_levenshtein";
 static const char __pyx_k_jaro_winkler_similarity[] = "jaro_winkler_similarity";
 static const char __pyx_k_pyx_unpickle___Pyx_EnumMeta[] = "__pyx_unpickle___Pyx_EnumMeta";
 static const char __pyx_k_Pyx_EnumMeta___reduce_cython[] = "__Pyx_EnumMeta.__reduce_cython__";
-static const char __pyx_k_levenshtein_editops_line_251[] = "levenshtein_editops (line 251)";
+static const char __pyx_k_levenshtein_editops_line_252[] = "levenshtein_editops (line 252)";
 static const char __pyx_k_Pyx_EnumMeta___setstate_cython[] = "__Pyx_EnumMeta.__setstate_cython__";
 static const char __pyx_k_Calculates_a_normalized_levensh[] = "\n    Calculates a normalized levenshtein distance using custom\n    costs for insertion, deletion and substitution.\n\n    Parameters\n    ----------\n    s1 : str\n        First string to compare.\n    s2 : str\n        Second string to compare.\n    weights : Tuple[int, int, int] or None, optional\n        The weights for the three operations in the form\n        (insertion, deletion, substitution). Default is (1, 1, 1),\n        which gives all three operations a weight of 1.\n    processor: bool or callable, optional\n        Optional callable that is used to preprocess the strings before\n        comparing them. When processor is True ``utils.default_process``\n        is used. Default is None, which deactivates this behaviour.\n    score_cutoff : float, optional\n        Optional argument for a score threshold as a float between 0 and 100.\n        For ratio < score_cutoff 0 is returned instead. Default is 0,\n        which deactivates this behaviour.\n\n    Returns\n    -------\n    similarity : float\n        similarity between s1 and s2 as a float between 0 and 100\n\n    Raises\n    ------\n    ValueError\n        If unsupported weights are provided a ValueError is thrown\n\n    See Also\n    --------\n    levenshtein : Levenshtein distance\n\n    Notes\n    -----\n    The normalization of the Levenshtein distance is performed in the following way:\n\n    .. math::\n      :nowrap:\n\n      \\begin{align*}\n        dist_{max} &= \\begin{cases}\n          min(len(s1), len(s2)) \\cdot sub,       & \\text{if } sub \\leq ins + del \\\\\n          len(s1) \\cdot del + len(s2) \\cdot ins, & \\text{otherwise}\n        \\end{cases}\\\\[10pt]\n\n        dist_{max} &= \\begin{cases}\n          dist_{max} + (len(s1) - len(s2)) \\cdot del, & \\text{if } len(s1) > len(s2) \\\\\n          dist_{max} + (len(s2) - len(s1)) \\cdot ins, & \\text{if } len(s1) < len(s2) \\\\\n          dist_{max},                                 & \\text{if } len(s1) = len(s2)\n        \\end{""cases}\\\\[10pt]\n\n        ratio &= 100 \\cdot \\frac{distance(s1, s2)}{dist_{max}}\n      \\end{align*}\n\n    Examples\n    --------\n    Find the normalized Levenshtein distance between two strings:\n\n    >>> from rapidfuzz.string_metric import normalized_levenshtein\n    >>> normalized_levenshtein(\"lewenstein\", \"levenshtein\")\n    81.81818181818181\n\n    Setting a score_cutoff allows the implementation to select\n    a more efficient implementation:\n\n    >>> normalized_levenshtein(\"lewenstein\", \"levenshtein\", score_cutoff=85)\n    0.0\n\n    It is possible to select different weights by passing a `weight`\n    tuple.\n\n    >>> normalized_levenshtein(\"lewenstein\", \"levenshtein\", weights=(1,1,2))\n    85.71428571428571\n\n     When a different processor is used s1 and s2 do not have to be strings\n\n    >>> normalized_levenshtein([\"lewenstein\"], [\"levenshtein\"], processor=lambda s: s[0])\n    81.81818181818181\n    ";
 static const char __pyx_k_Calculates_the_minimum_number_o[] = "\n    Calculates the minimum number of insertions, deletions, and substitutions\n    required to change one sequence into the other according to Levenshtein with custom\n    costs for insertion, deletion and substitution\n\n    Parameters\n    ----------\n    s1 : str\n        First string to compare.\n    s2 : str\n        Second string to compare.\n    weights : Tuple[int, int, int] or None, optional\n        The weights for the three operations in the form\n        (insertion, deletion, substitution). Default is (1, 1, 1),\n        which gives all three operations a weight of 1.\n    processor: bool or callable, optional\n        Optional callable that is used to preprocess the strings before\n        comparing them. When processor is True ``utils.default_process``\n        is used. Default is None, which deactivates this behaviour.\n    max : int or None, optional\n        Maximum distance between s1 and s2, that is\n        considered as a result. If the distance is bigger than max,\n        -1 is returned instead. Default is None, which deactivates\n        this behaviour.\n\n    Returns\n    -------\n    distance : int\n        distance between s1 and s2\n\n    Raises\n    ------\n    ValueError\n        If unsupported weights are provided a ValueError is thrown\n\n    Notes\n    -----\n    Depending on the input parameters different optimized implementation are used\n    to improve the performance.\n\n    Insertion = Deletion = Substitution:\n      This is known as uniform Levenshtein distance and is the distance most commonly\n      referred to as Levenshtein distance. The following implementation is used\n      with a worst-case performance of ``O([N/64]M)``.\n\n      - if max is 0 the similarity can be calculated using a direct comparision,\n        since no difference between the strings is allowed.  The time complexity of\n        this algorithm is ``O(N)``.\n\n      - A common prefix/suffix of the two compared strings does not affect\n        the Leven""shtein distance, so the affix is removed before calculating the\n        similarity.\n\n      - If max is \342\211\244 3 the mbleven algorithm is used. This algorithm\n        checks all possible edit operations that are possible under\n        the threshold `max`. The time complexity of this algorithm is ``O(N)``.\n\n      - If the length of the shorter string is \342\211\244 64 after removing the common affix\n        Hyyr\303\266s' algorithm is used, which calculates the Levenshtein distance in\n        parallel. The algorithm is described by [1]_. The time complexity of this\n        algorithm is ``O(N)``.\n\n      - If the length of the shorter string is \342\211\245 64 after removing the common affix\n        a blockwise implementation of Myers' algorithm is used, which calculates\n        the Levenshtein distance in parallel (64 characters at a time).\n        The algorithm is described by [3]_. The time complexity of this\n        algorithm is ``O([N/64]M)``.\n\n    The following image shows a benchmark of the Levenshtein distance in multiple\n    Python libraries. All of them are implemented either in C/C++ or Cython.\n    The graph shows, that python-Levenshtein is the only library with a time\n    complexity of ``O(NM)``, while all other libraries have a time complexity of\n    ``O([N/64]M)``. Especially for long strings RapidFuzz is a lot faster than\n    all the other tested libraries.\n\n    .. image:: img/uniform_levenshtein.svg\n\n\n    Insertion = Deletion, Substitution >= Insertion + Deletion:\n      Since every Substitution can be performed as Insertion + Deletion, this variant\n      of the Levenshtein distance only uses Insertions and Deletions. Therefore this\n      variant is often referred to as InDel-Distance.  The following implementation\n      is used with a worst-case performance of ``O([N/64]M)``.\n\n      - if max is 0 the similarity can be calculated using a direct comparision,\n        since no difference between the strings is allow""ed.  The time complexity of\n        this algorithm is ``O(N)``.\n\n      - if max is 1 and the two strings have a similar length, the similarity can be\n        calculated using a direct comparision aswell, since a substitution would cause\n        a edit distance higher than max. The time complexity of this algorithm\n        is ``O(N)``.\n\n      - A common prefix/suffix of the two compared strings does not affect\n        the Levenshtein distance, so the affix is removed before calculating the\n        similarity.\n\n      - If max is \342\211\244 4 the mbleven algorithm is used. This algorithm\n        checks all possible edit operations that are possible under\n        the threshold `max`. As a difference to the normal Levenshtein distance this\n        algorithm can even be used up to a threshold of 4 here, since the higher weight\n        of substitutions decreases the amount of possible edit operations.\n        The time complexity of this algorithm is ``O(N)``.\n\n      - If the length of the shorter string is \342\211\244 64 after removing the common affix\n        the BitPAl algorithm is used, which calculates the Levenshtein distance in\n        parallel. The algorithm is described by [4]_ and is extended with support\n        for UTF32 in this implementation. The time complexity of this\n        algorithm is ``O(N)``.\n\n      - If the length of the shorter string is \342\211\245 64 after removing the common affix\n        a blockwise implementation of the BitPAl algorithm is used, which calculates\n        the Levenshtein distance in parallel (64 characters at a time).\n        The algorithm is described by [4]_. The time complexity of this\n        algorithm is ``O([N/64]M)``.\n\n    The following image shows a benchmark of the InDel distance in RapidFuzz\n    and python-Levenshtein. Similar to the normal Levenshtein distance\n    python-Levenshtein uses a implementation with a time complexity of ``O(NM)``,\n    while RapidFuzz has a time complexity ""of ``O([N/64]M)``.\n\n    .. image:: img/indel_levenshtein.svg\n\n\n    Other weights:\n      The implementation for other weights is based on Wagner-Fischer.\n      It has a performance of ``O(N * M)`` and has a memory usage of ``O(N)``.\n      Further details can be found in [2]_.\n\n    References\n    ----------\n    .. [1] Hyyr\303\266, Heikki. \"A Bit-Vector Algorithm for Computing\n           Levenshtein and Damerau Edit Distances.\"\n           Nordic Journal of Computing, Volume 10 (2003): 29-39.\n    .. [2] Wagner, Robert & Fischer, Michael\n           \"The String-to-String Correction Problem.\"\n           J. ACM. 21. (1974): 168-173\n    .. [3] Myers, Gene. \"A fast bit-vector algorithm for approximate\n           string matching based on dynamic programming.\"\n           Journal of the ACM (JACM) 46.3 (1999): 395-415.\n    .. [4] Loving, Joshua & Hern\303\241ndez, Y\303\266zen & Benson, Gary.\n           \"BitPAl: A Bit-Parallel, General Integer-Scoring Sequence\n           Alignment Algorithm. Bioinformatics\"\n           Bioinformatics, Volume 30 (2014): 3166\342\200\2233173\n\n    Examples\n    --------\n    Find the Levenshtein distance between two strings:\n\n    >>> from rapidfuzz.string_metric import levenshtein\n    >>> levenshtein(\"lewenstein\", \"levenshtein\")\n    2\n\n    Setting a maximum distance allows the implementation to select\n    a more efficient implementation:\n\n    >>> levenshtein(\"lewenstein\", \"levenshtein\", max=1)\n    -1\n\n    It is possible to select different weights by passing a `weight`\n    tuple.\n\n    >>> levenshtein(\"lewenstein\", \"levenshtein\", weights=(1,1,2))\n    3\n    ";
 static const char __pyx_k_Return_list_of_3_tuples_describ[] = "\n    Return list of 3-tuples describing how to turn s1 into s2.\n    Each tuple is of the form (tag, src_pos, dest_pos).\n\n    The tags are strings, with these meanings:\n    'replace':  s1[src_pos] should be replaced by s2[dest_pos]\n    'delete':   s1[src_pos] should be deleted.\n    'insert':   s2[dest_pos] should be inserted at s1[src_pos].\n\n    Parameters\n    ----------\n    s1 : str\n        First string to compare.\n    s2 : str\n        Second string to compare.\n    processor: bool or callable, optional\n        Optional callable that is used to preprocess the strings before\n        comparing them. When processor is True ``utils.default_process``\n        is used. Default is None, which deactivates this behaviour.\n\n    Returns\n    -------\n    editops : list[]\n        edit operations required to turn s1 into s2\n\n    Examples\n    --------\n    >>> from rapidfuzz.string_metric import levenshtein_editops\n    >>> for tag, src_pos, dest_pos in levenshtein_editops(\"qabxcd\", \"abycdf\"):\n    ...    print((\"%7s s1[%d] s2[%d]\" % (tag, src_pos, dest_pos)))\n     delete s1[1] s2[0]\n    replace s1[4] s2[3]\n     insert s1[6] s2[6]\n    ";
-static const char __pyx_k_normalized_levenshtein_line_298[] = "normalized_levenshtein (line 298)";
+static const char __pyx_k_normalized_levenshtein_line_301[] = "normalized_levenshtein (line 301)";
 static const char __pyx_k_Incompatible_checksums_s_vs_0xda[] = "Incompatible checksums (%s vs 0xda39a3e = ())";
 #if !CYTHON_USE_MODULE_STATE
 static PyObject *__pyx_kp_u_Calculates_a_normalized_levensh;
@@ -2114,8 +2116,8 @@ static PyObject *__pyx_n_s_jaro_similarity;
 static PyObject *__pyx_n_s_jaro_winkler_similarity;
 static PyObject *__pyx_n_s_levenshtein;
 static PyObject *__pyx_n_s_levenshtein_editops;
-static PyObject *__pyx_kp_u_levenshtein_editops_line_251;
-static PyObject *__pyx_kp_u_levenshtein_line_51;
+static PyObject *__pyx_kp_u_levenshtein_editops_line_252;
+static PyObject *__pyx_kp_u_levenshtein_line_46;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_max;
 static PyObject *__pyx_n_s_members;
@@ -2127,7 +2129,7 @@ static PyObject *__pyx_n_s_name_2;
 static PyObject *__pyx_n_s_new;
 static PyObject *__pyx_n_s_normalized_hamming;
 static PyObject *__pyx_n_s_normalized_levenshtein;
-static PyObject *__pyx_kp_u_normalized_levenshtein_line_298;
+static PyObject *__pyx_kp_u_normalized_levenshtein_line_301;
 static PyObject *__pyx_n_s_parents;
 static PyObject *__pyx_n_s_pickle;
 static PyObject *__pyx_n_s_prefix_weight;
@@ -2149,7 +2151,9 @@ static PyObject *__pyx_n_u_replace;
 static PyObject *__pyx_n_s_repr;
 static PyObject *__pyx_n_s_res;
 static PyObject *__pyx_n_s_s1;
+static PyObject *__pyx_n_s_s1_proc;
 static PyObject *__pyx_n_s_s2;
+static PyObject *__pyx_n_s_s2_proc;
 static PyObject *__pyx_kp_s_s_s;
 static PyObject *__pyx_kp_s_s_s_d;
 static PyObject *__pyx_n_s_score_cutoff;
@@ -2300,8 +2304,8 @@ typedef struct {
   PyObject *__pyx_n_s_jaro_winkler_similarity;
   PyObject *__pyx_n_s_levenshtein;
   PyObject *__pyx_n_s_levenshtein_editops;
-  PyObject *__pyx_kp_u_levenshtein_editops_line_251;
-  PyObject *__pyx_kp_u_levenshtein_line_51;
+  PyObject *__pyx_kp_u_levenshtein_editops_line_252;
+  PyObject *__pyx_kp_u_levenshtein_line_46;
   PyObject *__pyx_n_s_main;
   PyObject *__pyx_n_s_max;
   PyObject *__pyx_n_s_members;
@@ -2313,7 +2317,7 @@ typedef struct {
   PyObject *__pyx_n_s_new;
   PyObject *__pyx_n_s_normalized_hamming;
   PyObject *__pyx_n_s_normalized_levenshtein;
-  PyObject *__pyx_kp_u_normalized_levenshtein_line_298;
+  PyObject *__pyx_kp_u_normalized_levenshtein_line_301;
   PyObject *__pyx_n_s_parents;
   PyObject *__pyx_n_s_pickle;
   PyObject *__pyx_n_s_prefix_weight;
@@ -2335,7 +2339,9 @@ typedef struct {
   PyObject *__pyx_n_s_repr;
   PyObject *__pyx_n_s_res;
   PyObject *__pyx_n_s_s1;
+  PyObject *__pyx_n_s_s1_proc;
   PyObject *__pyx_n_s_s2;
+  PyObject *__pyx_n_s_s2_proc;
   PyObject *__pyx_kp_s_s_s;
   PyObject *__pyx_kp_s_s_s_d;
   PyObject *__pyx_n_s_score_cutoff;
@@ -2481,8 +2487,8 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_jaro_winkler_similarity);
   Py_CLEAR(clear_module_state->__pyx_n_s_levenshtein);
   Py_CLEAR(clear_module_state->__pyx_n_s_levenshtein_editops);
-  Py_CLEAR(clear_module_state->__pyx_kp_u_levenshtein_editops_line_251);
-  Py_CLEAR(clear_module_state->__pyx_kp_u_levenshtein_line_51);
+  Py_CLEAR(clear_module_state->__pyx_kp_u_levenshtein_editops_line_252);
+  Py_CLEAR(clear_module_state->__pyx_kp_u_levenshtein_line_46);
   Py_CLEAR(clear_module_state->__pyx_n_s_main);
   Py_CLEAR(clear_module_state->__pyx_n_s_max);
   Py_CLEAR(clear_module_state->__pyx_n_s_members);
@@ -2494,7 +2500,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_new);
   Py_CLEAR(clear_module_state->__pyx_n_s_normalized_hamming);
   Py_CLEAR(clear_module_state->__pyx_n_s_normalized_levenshtein);
-  Py_CLEAR(clear_module_state->__pyx_kp_u_normalized_levenshtein_line_298);
+  Py_CLEAR(clear_module_state->__pyx_kp_u_normalized_levenshtein_line_301);
   Py_CLEAR(clear_module_state->__pyx_n_s_parents);
   Py_CLEAR(clear_module_state->__pyx_n_s_pickle);
   Py_CLEAR(clear_module_state->__pyx_n_s_prefix_weight);
@@ -2516,7 +2522,9 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_repr);
   Py_CLEAR(clear_module_state->__pyx_n_s_res);
   Py_CLEAR(clear_module_state->__pyx_n_s_s1);
+  Py_CLEAR(clear_module_state->__pyx_n_s_s1_proc);
   Py_CLEAR(clear_module_state->__pyx_n_s_s2);
+  Py_CLEAR(clear_module_state->__pyx_n_s_s2_proc);
   Py_CLEAR(clear_module_state->__pyx_kp_s_s_s);
   Py_CLEAR(clear_module_state->__pyx_kp_s_s_s_d);
   Py_CLEAR(clear_module_state->__pyx_n_s_score_cutoff);
@@ -2649,8 +2657,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_jaro_winkler_similarity);
   Py_VISIT(traverse_module_state->__pyx_n_s_levenshtein);
   Py_VISIT(traverse_module_state->__pyx_n_s_levenshtein_editops);
-  Py_VISIT(traverse_module_state->__pyx_kp_u_levenshtein_editops_line_251);
-  Py_VISIT(traverse_module_state->__pyx_kp_u_levenshtein_line_51);
+  Py_VISIT(traverse_module_state->__pyx_kp_u_levenshtein_editops_line_252);
+  Py_VISIT(traverse_module_state->__pyx_kp_u_levenshtein_line_46);
   Py_VISIT(traverse_module_state->__pyx_n_s_main);
   Py_VISIT(traverse_module_state->__pyx_n_s_max);
   Py_VISIT(traverse_module_state->__pyx_n_s_members);
@@ -2662,7 +2670,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_new);
   Py_VISIT(traverse_module_state->__pyx_n_s_normalized_hamming);
   Py_VISIT(traverse_module_state->__pyx_n_s_normalized_levenshtein);
-  Py_VISIT(traverse_module_state->__pyx_kp_u_normalized_levenshtein_line_298);
+  Py_VISIT(traverse_module_state->__pyx_kp_u_normalized_levenshtein_line_301);
   Py_VISIT(traverse_module_state->__pyx_n_s_parents);
   Py_VISIT(traverse_module_state->__pyx_n_s_pickle);
   Py_VISIT(traverse_module_state->__pyx_n_s_prefix_weight);
@@ -2684,7 +2692,9 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_repr);
   Py_VISIT(traverse_module_state->__pyx_n_s_res);
   Py_VISIT(traverse_module_state->__pyx_n_s_s1);
+  Py_VISIT(traverse_module_state->__pyx_n_s_s1_proc);
   Py_VISIT(traverse_module_state->__pyx_n_s_s2);
+  Py_VISIT(traverse_module_state->__pyx_n_s_s2_proc);
   Py_VISIT(traverse_module_state->__pyx_kp_s_s_s);
   Py_VISIT(traverse_module_state->__pyx_kp_s_s_s_d);
   Py_VISIT(traverse_module_state->__pyx_n_s_score_cutoff);
@@ -2814,8 +2824,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_jaro_winkler_similarity __pyx_mstate_global->__pyx_n_s_jaro_winkler_similarity
 #define __pyx_n_s_levenshtein __pyx_mstate_global->__pyx_n_s_levenshtein
 #define __pyx_n_s_levenshtein_editops __pyx_mstate_global->__pyx_n_s_levenshtein_editops
-#define __pyx_kp_u_levenshtein_editops_line_251 __pyx_mstate_global->__pyx_kp_u_levenshtein_editops_line_251
-#define __pyx_kp_u_levenshtein_line_51 __pyx_mstate_global->__pyx_kp_u_levenshtein_line_51
+#define __pyx_kp_u_levenshtein_editops_line_252 __pyx_mstate_global->__pyx_kp_u_levenshtein_editops_line_252
+#define __pyx_kp_u_levenshtein_line_46 __pyx_mstate_global->__pyx_kp_u_levenshtein_line_46
 #define __pyx_n_s_main __pyx_mstate_global->__pyx_n_s_main
 #define __pyx_n_s_max __pyx_mstate_global->__pyx_n_s_max
 #define __pyx_n_s_members __pyx_mstate_global->__pyx_n_s_members
@@ -2827,7 +2837,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_new __pyx_mstate_global->__pyx_n_s_new
 #define __pyx_n_s_normalized_hamming __pyx_mstate_global->__pyx_n_s_normalized_hamming
 #define __pyx_n_s_normalized_levenshtein __pyx_mstate_global->__pyx_n_s_normalized_levenshtein
-#define __pyx_kp_u_normalized_levenshtein_line_298 __pyx_mstate_global->__pyx_kp_u_normalized_levenshtein_line_298
+#define __pyx_kp_u_normalized_levenshtein_line_301 __pyx_mstate_global->__pyx_kp_u_normalized_levenshtein_line_301
 #define __pyx_n_s_parents __pyx_mstate_global->__pyx_n_s_parents
 #define __pyx_n_s_pickle __pyx_mstate_global->__pyx_n_s_pickle
 #define __pyx_n_s_prefix_weight __pyx_mstate_global->__pyx_n_s_prefix_weight
@@ -2849,7 +2859,9 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_repr __pyx_mstate_global->__pyx_n_s_repr
 #define __pyx_n_s_res __pyx_mstate_global->__pyx_n_s_res
 #define __pyx_n_s_s1 __pyx_mstate_global->__pyx_n_s_s1
+#define __pyx_n_s_s1_proc __pyx_mstate_global->__pyx_n_s_s1_proc
 #define __pyx_n_s_s2 __pyx_mstate_global->__pyx_n_s_s2
+#define __pyx_n_s_s2_proc __pyx_mstate_global->__pyx_n_s_s2_proc
 #define __pyx_kp_s_s_s __pyx_mstate_global->__pyx_kp_s_s_s
 #define __pyx_kp_s_s_s_d __pyx_mstate_global->__pyx_kp_s_s_s_d
 #define __pyx_n_s_score_cutoff __pyx_mstate_global->__pyx_n_s_score_cutoff
@@ -3025,8 +3037,8 @@ static CYTHON_INLINE proc_string __pyx_f_17cpp_string_metric_conv_sequence(PyObj
   return __pyx_r;
 }
 
-/* "cpp_string_metric.pyx":51
- *     vector[LevenshteinEditOp] levenshtein_editops_default_process(const proc_string& s1, const proc_string& s2) nogil except +
+/* "cpp_string_metric.pyx":46
+ *     vector[LevenshteinEditOp] cpp_levenshtein_editops(     const proc_string& s1, const proc_string& s2) nogil except +
  * 
  * def levenshtein(s1, s2, *, weights=(1,1,1), processor=None, max=None):             # <<<<<<<<<<<<<<
  *     """
@@ -3089,14 +3101,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       switch (__pyx_nargs) {
         case  0:
         if (likely((values[0] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_s1)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 46, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
         if (likely((values[1] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_s2)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 46, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("levenshtein", 1, 2, 2, 1); __PYX_ERR(0, 51, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("levenshtein", 1, 2, 2, 1); __PYX_ERR(0, 46, __pyx_L3_error)
         }
       }
       if (kw_args > 0 && likely(kw_args <= 3)) {
@@ -3104,12 +3116,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
         for (index = 2; index < 5 && kw_args > 0; index++) {
           PyObject* value = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, *__pyx_pyargnames[index]);
           if (value) { values[index] = value; kw_args--; }
-          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L3_error)
+          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 46, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "levenshtein") < 0)) __PYX_ERR(0, 51, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "levenshtein") < 0)) __PYX_ERR(0, 46, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
@@ -3125,7 +3137,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("levenshtein", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 51, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("levenshtein", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 46, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("cpp_string_metric.levenshtein", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3143,6 +3155,8 @@ static PyObject *__pyx_pf_17cpp_string_metric_levenshtein(CYTHON_UNUSED PyObject
   size_t __pyx_v_deletion;
   size_t __pyx_v_substitution;
   size_t __pyx_v_c_max;
+  proc_string __pyx_v_s1_proc;
+  proc_string __pyx_v_s2_proc;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -3166,7 +3180,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_levenshtein(CYTHON_UNUSED PyObject
   __Pyx_INCREF(__pyx_v_s1);
   __Pyx_INCREF(__pyx_v_s2);
 
-  /* "cpp_string_metric.pyx":218
+  /* "cpp_string_metric.pyx":213
  *     """
  *     cdef size_t insertion, deletion, substitution
  *     insertion = deletion = substitution = 1             # <<<<<<<<<<<<<<
@@ -3177,7 +3191,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_levenshtein(CYTHON_UNUSED PyObject
   __pyx_v_deletion = 1;
   __pyx_v_substitution = 1;
 
-  /* "cpp_string_metric.pyx":219
+  /* "cpp_string_metric.pyx":214
  *     cdef size_t insertion, deletion, substitution
  *     insertion = deletion = substitution = 1
  *     if weights is not None:             # <<<<<<<<<<<<<<
@@ -3188,7 +3202,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_levenshtein(CYTHON_UNUSED PyObject
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "cpp_string_metric.pyx":220
+    /* "cpp_string_metric.pyx":215
  *     insertion = deletion = substitution = 1
  *     if weights is not None:
  *         insertion, deletion, substitution = weights             # <<<<<<<<<<<<<<
@@ -3201,7 +3215,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_levenshtein(CYTHON_UNUSED PyObject
       if (unlikely(size != 3)) {
         if (size > 3) __Pyx_RaiseTooManyValuesError(3);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 220, __pyx_L1_error)
+        __PYX_ERR(0, 215, __pyx_L1_error)
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -3217,16 +3231,16 @@ static PyObject *__pyx_pf_17cpp_string_metric_levenshtein(CYTHON_UNUSED PyObject
       __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_5);
       #else
-      __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 220, __pyx_L1_error)
+      __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 215, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 220, __pyx_L1_error)
+      __pyx_t_4 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 215, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 220, __pyx_L1_error)
+      __pyx_t_5 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 215, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       #endif
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_6 = PyObject_GetIter(__pyx_v_weights); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 220, __pyx_L1_error)
+      __pyx_t_6 = PyObject_GetIter(__pyx_v_weights); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 215, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_7 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_6);
       index = 0; __pyx_t_3 = __pyx_t_7(__pyx_t_6); if (unlikely(!__pyx_t_3)) goto __pyx_L4_unpacking_failed;
@@ -3235,7 +3249,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_levenshtein(CYTHON_UNUSED PyObject
       __Pyx_GOTREF(__pyx_t_4);
       index = 2; __pyx_t_5 = __pyx_t_7(__pyx_t_6); if (unlikely(!__pyx_t_5)) goto __pyx_L4_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_5);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_7(__pyx_t_6), 3) < 0) __PYX_ERR(0, 220, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_7(__pyx_t_6), 3) < 0) __PYX_ERR(0, 215, __pyx_L1_error)
       __pyx_t_7 = NULL;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       goto __pyx_L5_unpacking_done;
@@ -3243,20 +3257,20 @@ static PyObject *__pyx_pf_17cpp_string_metric_levenshtein(CYTHON_UNUSED PyObject
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __pyx_t_7 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 220, __pyx_L1_error)
+      __PYX_ERR(0, 215, __pyx_L1_error)
       __pyx_L5_unpacking_done:;
     }
-    __pyx_t_8 = __Pyx_PyInt_As_size_t(__pyx_t_3); if (unlikely((__pyx_t_8 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 220, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_As_size_t(__pyx_t_3); if (unlikely((__pyx_t_8 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 215, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_9 = __Pyx_PyInt_As_size_t(__pyx_t_4); if (unlikely((__pyx_t_9 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 220, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyInt_As_size_t(__pyx_t_4); if (unlikely((__pyx_t_9 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 215, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_10 = __Pyx_PyInt_As_size_t(__pyx_t_5); if (unlikely((__pyx_t_10 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 220, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyInt_As_size_t(__pyx_t_5); if (unlikely((__pyx_t_10 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 215, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_insertion = __pyx_t_8;
     __pyx_v_deletion = __pyx_t_9;
     __pyx_v_substitution = __pyx_t_10;
 
-    /* "cpp_string_metric.pyx":219
+    /* "cpp_string_metric.pyx":214
  *     cdef size_t insertion, deletion, substitution
  *     insertion = deletion = substitution = 1
  *     if weights is not None:             # <<<<<<<<<<<<<<
@@ -3265,7 +3279,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_levenshtein(CYTHON_UNUSED PyObject
  */
   }
 
-  /* "cpp_string_metric.pyx":222
+  /* "cpp_string_metric.pyx":217
  *         insertion, deletion, substitution = weights
  * 
  *     cdef size_t c_max = <size_t>-1 if max is None else max             # <<<<<<<<<<<<<<
@@ -3276,17 +3290,17 @@ static PyObject *__pyx_pf_17cpp_string_metric_levenshtein(CYTHON_UNUSED PyObject
   if ((__pyx_t_2 != 0)) {
     __pyx_t_10 = ((size_t)-1L);
   } else {
-    __pyx_t_9 = __Pyx_PyInt_As_size_t(__pyx_v_max); if (unlikely((__pyx_t_9 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 222, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyInt_As_size_t(__pyx_v_max); if (unlikely((__pyx_t_9 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 217, __pyx_L1_error)
     __pyx_t_10 = __pyx_t_9;
   }
   __pyx_v_c_max = __pyx_t_10;
 
-  /* "cpp_string_metric.pyx":224
+  /* "cpp_string_metric.pyx":219
  *     cdef size_t c_max = <size_t>-1 if max is None else max
  * 
  *     if processor is True or processor == default_process:             # <<<<<<<<<<<<<<
- *         return levenshtein_default_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_max)
- *     elif callable(processor):
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  */
   __pyx_t_1 = (__pyx_v_processor == Py_True);
   __pyx_t_11 = (__pyx_t_1 != 0);
@@ -3295,64 +3309,75 @@ static PyObject *__pyx_pf_17cpp_string_metric_levenshtein(CYTHON_UNUSED PyObject
     __pyx_t_2 = __pyx_t_11;
     goto __pyx_L7_bool_binop_done;
   }
-  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_default_process); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 224, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_default_process); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 219, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_4 = PyObject_RichCompare(__pyx_v_processor, __pyx_t_5, Py_EQ); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 224, __pyx_L1_error)
+  __pyx_t_4 = PyObject_RichCompare(__pyx_v_processor, __pyx_t_5, Py_EQ); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 219, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 224, __pyx_L1_error)
+  __pyx_t_11 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_11 < 0))) __PYX_ERR(0, 219, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_t_2 = __pyx_t_11;
   __pyx_L7_bool_binop_done:;
   if (__pyx_t_2) {
 
-    /* "cpp_string_metric.pyx":225
+    /* "cpp_string_metric.pyx":220
  * 
  *     if processor is True or processor == default_process:
- *         return levenshtein_default_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_max)             # <<<<<<<<<<<<<<
+ *         s1_proc = default_process_(conv_sequence(s1))             # <<<<<<<<<<<<<<
+ *         s2_proc = default_process_(conv_sequence(s2))
+ *     elif callable(processor):
+ */
+    __pyx_t_12 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 220, __pyx_L1_error)
+    try {
+      __pyx_t_13 = default_process_(__pyx_t_12);
+    } catch(...) {
+      __Pyx_CppExn2PyErr();
+      __PYX_ERR(0, 220, __pyx_L1_error)
+    }
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_13);
+
+    /* "cpp_string_metric.pyx":221
+ *     if processor is True or processor == default_process:
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))             # <<<<<<<<<<<<<<
  *     elif callable(processor):
  *         s1 = processor(s1)
  */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_12 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 225, __pyx_L1_error)
-    __pyx_t_13 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 225, __pyx_L1_error)
+    __pyx_t_13 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 221, __pyx_L1_error)
     try {
-      __pyx_t_4 = levenshtein_default_process(__pyx_t_12, __pyx_t_13, __pyx_v_insertion, __pyx_v_deletion, __pyx_v_substitution, __pyx_v_c_max);
-      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 225, __pyx_L1_error)
+      __pyx_t_12 = default_process_(__pyx_t_13);
     } catch(...) {
       __Pyx_CppExn2PyErr();
-      __PYX_ERR(0, 225, __pyx_L1_error)
+      __PYX_ERR(0, 221, __pyx_L1_error)
     }
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_r = __pyx_t_4;
-    __pyx_t_4 = 0;
-    goto __pyx_L0;
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_12);
 
-    /* "cpp_string_metric.pyx":224
+    /* "cpp_string_metric.pyx":219
  *     cdef size_t c_max = <size_t>-1 if max is None else max
  * 
  *     if processor is True or processor == default_process:             # <<<<<<<<<<<<<<
- *         return levenshtein_default_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_max)
- *     elif callable(processor):
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  */
+    goto __pyx_L6;
   }
 
-  /* "cpp_string_metric.pyx":226
- *     if processor is True or processor == default_process:
- *         return levenshtein_default_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_max)
+  /* "cpp_string_metric.pyx":222
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):             # <<<<<<<<<<<<<<
  *         s1 = processor(s1)
  *         s2 = processor(s2)
  */
-  __pyx_t_2 = __Pyx_PyCallable_Check(__pyx_v_processor); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(0, 226, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyCallable_Check(__pyx_v_processor); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(0, 222, __pyx_L1_error)
   __pyx_t_11 = (__pyx_t_2 != 0);
   if (__pyx_t_11) {
 
-    /* "cpp_string_metric.pyx":227
- *         return levenshtein_default_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_max)
+    /* "cpp_string_metric.pyx":223
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):
  *         s1 = processor(s1)             # <<<<<<<<<<<<<<
  *         s2 = processor(s2)
- * 
+ *         s1_proc = conv_sequence(s1)
  */
     __Pyx_INCREF(__pyx_v_processor);
     __pyx_t_5 = __pyx_v_processor; __pyx_t_3 = NULL;
@@ -3371,19 +3396,19 @@ static PyObject *__pyx_pf_17cpp_string_metric_levenshtein(CYTHON_UNUSED PyObject
       PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_v_s1};
       __pyx_t_4 = __Pyx_PyObject_FastCall(__pyx_t_5, __pyx_callargs+1-__pyx_t_14, 1+__pyx_t_14);
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 227, __pyx_L1_error)
+      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 223, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
     __Pyx_DECREF_SET(__pyx_v_s1, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "cpp_string_metric.pyx":228
+    /* "cpp_string_metric.pyx":224
  *     elif callable(processor):
  *         s1 = processor(s1)
  *         s2 = processor(s2)             # <<<<<<<<<<<<<<
- * 
- *     return levenshtein_no_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_max)
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)
  */
     __Pyx_INCREF(__pyx_v_processor);
     __pyx_t_5 = __pyx_v_processor; __pyx_t_3 = NULL;
@@ -3402,46 +3427,88 @@ static PyObject *__pyx_pf_17cpp_string_metric_levenshtein(CYTHON_UNUSED PyObject
       PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_v_s2};
       __pyx_t_4 = __Pyx_PyObject_FastCall(__pyx_t_5, __pyx_callargs+1-__pyx_t_14, 1+__pyx_t_14);
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 228, __pyx_L1_error)
+      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 224, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
     __Pyx_DECREF_SET(__pyx_v_s2, __pyx_t_4);
     __pyx_t_4 = 0;
 
+    /* "cpp_string_metric.pyx":225
+ *         s1 = processor(s1)
+ *         s2 = processor(s2)
+ *         s1_proc = conv_sequence(s1)             # <<<<<<<<<<<<<<
+ *         s2_proc = conv_sequence(s2)
+ *     else:
+ */
+    __pyx_t_12 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 225, __pyx_L1_error)
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_12);
+
     /* "cpp_string_metric.pyx":226
- *     if processor is True or processor == default_process:
- *         return levenshtein_default_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_max)
+ *         s2 = processor(s2)
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)             # <<<<<<<<<<<<<<
+ *     else:
+ *         s1_proc = conv_sequence(s1)
+ */
+    __pyx_t_12 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 226, __pyx_L1_error)
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_12);
+
+    /* "cpp_string_metric.pyx":222
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):             # <<<<<<<<<<<<<<
  *         s1 = processor(s1)
  *         s2 = processor(s2)
  */
+    goto __pyx_L6;
   }
 
-  /* "cpp_string_metric.pyx":230
- *         s2 = processor(s2)
+  /* "cpp_string_metric.pyx":228
+ *         s2_proc = conv_sequence(s2)
+ *     else:
+ *         s1_proc = conv_sequence(s1)             # <<<<<<<<<<<<<<
+ *         s2_proc = conv_sequence(s2)
  * 
- *     return levenshtein_no_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_max)             # <<<<<<<<<<<<<<
+ */
+  /*else*/ {
+    __pyx_t_12 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 228, __pyx_L1_error)
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_12);
+
+    /* "cpp_string_metric.pyx":229
+ *     else:
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)             # <<<<<<<<<<<<<<
+ * 
+ *     return cpp_levenshtein(s1_proc, s2_proc, insertion, deletion, substitution, c_max)
+ */
+    __pyx_t_12 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 229, __pyx_L1_error)
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_12);
+  }
+  __pyx_L6:;
+
+  /* "cpp_string_metric.pyx":231
+ *         s2_proc = conv_sequence(s2)
+ * 
+ *     return cpp_levenshtein(s1_proc, s2_proc, insertion, deletion, substitution, c_max)             # <<<<<<<<<<<<<<
  * 
  * cdef str levenshtein_edit_type_to_str(LevenshteinEditType edit_type):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_13 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 230, __pyx_L1_error)
-  __pyx_t_12 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 230, __pyx_L1_error)
   try {
-    __pyx_t_4 = levenshtein_no_process(__pyx_t_13, __pyx_t_12, __pyx_v_insertion, __pyx_v_deletion, __pyx_v_substitution, __pyx_v_c_max);
-    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 230, __pyx_L1_error)
+    __pyx_t_4 = cpp_levenshtein(__pyx_v_s1_proc, __pyx_v_s2_proc, __pyx_v_insertion, __pyx_v_deletion, __pyx_v_substitution, __pyx_v_c_max);
+    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 231, __pyx_L1_error)
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 230, __pyx_L1_error)
+    __PYX_ERR(0, 231, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_r = __pyx_t_4;
   __pyx_t_4 = 0;
   goto __pyx_L0;
 
-  /* "cpp_string_metric.pyx":51
- *     vector[LevenshteinEditOp] levenshtein_editops_default_process(const proc_string& s1, const proc_string& s2) nogil except +
+  /* "cpp_string_metric.pyx":46
+ *     vector[LevenshteinEditOp] cpp_levenshtein_editops(     const proc_string& s1, const proc_string& s2) nogil except +
  * 
  * def levenshtein(s1, s2, *, weights=(1,1,1), processor=None, max=None):             # <<<<<<<<<<<<<<
  *     """
@@ -3464,8 +3531,8 @@ static PyObject *__pyx_pf_17cpp_string_metric_levenshtein(CYTHON_UNUSED PyObject
   return __pyx_r;
 }
 
-/* "cpp_string_metric.pyx":232
- *     return levenshtein_no_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_max)
+/* "cpp_string_metric.pyx":233
+ *     return cpp_levenshtein(s1_proc, s2_proc, insertion, deletion, substitution, c_max)
  * 
  * cdef str levenshtein_edit_type_to_str(LevenshteinEditType edit_type):             # <<<<<<<<<<<<<<
  *     if edit_type == LevenshteinEditType.Insert:
@@ -3478,7 +3545,7 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_edit_type_to_str(__PYX_
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("levenshtein_edit_type_to_str", 0);
 
-  /* "cpp_string_metric.pyx":233
+  /* "cpp_string_metric.pyx":234
  * 
  * cdef str levenshtein_edit_type_to_str(LevenshteinEditType edit_type):
  *     if edit_type == LevenshteinEditType.Insert:             # <<<<<<<<<<<<<<
@@ -3488,7 +3555,7 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_edit_type_to_str(__PYX_
   __pyx_t_1 = ((__pyx_v_edit_type == rapidfuzz::LevenshteinEditType::Insert) != 0);
   if (__pyx_t_1) {
 
-    /* "cpp_string_metric.pyx":234
+    /* "cpp_string_metric.pyx":235
  * cdef str levenshtein_edit_type_to_str(LevenshteinEditType edit_type):
  *     if edit_type == LevenshteinEditType.Insert:
  *         return "insert"             # <<<<<<<<<<<<<<
@@ -3500,7 +3567,7 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_edit_type_to_str(__PYX_
     __pyx_r = __pyx_n_u_insert;
     goto __pyx_L0;
 
-    /* "cpp_string_metric.pyx":233
+    /* "cpp_string_metric.pyx":234
  * 
  * cdef str levenshtein_edit_type_to_str(LevenshteinEditType edit_type):
  *     if edit_type == LevenshteinEditType.Insert:             # <<<<<<<<<<<<<<
@@ -3509,7 +3576,7 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_edit_type_to_str(__PYX_
  */
   }
 
-  /* "cpp_string_metric.pyx":235
+  /* "cpp_string_metric.pyx":236
  *     if edit_type == LevenshteinEditType.Insert:
  *         return "insert"
  *     elif edit_type == LevenshteinEditType.Delete:             # <<<<<<<<<<<<<<
@@ -3519,7 +3586,7 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_edit_type_to_str(__PYX_
   __pyx_t_1 = ((__pyx_v_edit_type == rapidfuzz::LevenshteinEditType::Delete) != 0);
   if (__pyx_t_1) {
 
-    /* "cpp_string_metric.pyx":236
+    /* "cpp_string_metric.pyx":237
  *         return "insert"
  *     elif edit_type == LevenshteinEditType.Delete:
  *         return "delete"             # <<<<<<<<<<<<<<
@@ -3531,7 +3598,7 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_edit_type_to_str(__PYX_
     __pyx_r = __pyx_n_u_delete;
     goto __pyx_L0;
 
-    /* "cpp_string_metric.pyx":235
+    /* "cpp_string_metric.pyx":236
  *     if edit_type == LevenshteinEditType.Insert:
  *         return "insert"
  *     elif edit_type == LevenshteinEditType.Delete:             # <<<<<<<<<<<<<<
@@ -3540,7 +3607,7 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_edit_type_to_str(__PYX_
  */
   }
 
-  /* "cpp_string_metric.pyx":239
+  /* "cpp_string_metric.pyx":240
  *     # possibly requires no-op in the future as well
  *     else:
  *         return "replace"             # <<<<<<<<<<<<<<
@@ -3554,8 +3621,8 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_edit_type_to_str(__PYX_
     goto __pyx_L0;
   }
 
-  /* "cpp_string_metric.pyx":232
- *     return levenshtein_no_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_max)
+  /* "cpp_string_metric.pyx":233
+ *     return cpp_levenshtein(s1_proc, s2_proc, insertion, deletion, substitution, c_max)
  * 
  * cdef str levenshtein_edit_type_to_str(LevenshteinEditType edit_type):             # <<<<<<<<<<<<<<
  *     if edit_type == LevenshteinEditType.Insert:
@@ -3569,7 +3636,7 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_edit_type_to_str(__PYX_
   return __pyx_r;
 }
 
-/* "cpp_string_metric.pyx":241
+/* "cpp_string_metric.pyx":242
  *         return "replace"
  * 
  * cdef list levenshtein_editops_to_list(vector[LevenshteinEditOp] ops):             # <<<<<<<<<<<<<<
@@ -3596,7 +3663,7 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_editops_to_list(std::ve
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("levenshtein_editops_to_list", 0);
 
-  /* "cpp_string_metric.pyx":242
+  /* "cpp_string_metric.pyx":243
  * 
  * cdef list levenshtein_editops_to_list(vector[LevenshteinEditOp] ops):
  *     cdef size_t op_count = ops.size()             # <<<<<<<<<<<<<<
@@ -3605,19 +3672,19 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_editops_to_list(std::ve
  */
   __pyx_v_op_count = __pyx_v_ops.size();
 
-  /* "cpp_string_metric.pyx":243
+  /* "cpp_string_metric.pyx":244
  * cdef list levenshtein_editops_to_list(vector[LevenshteinEditOp] ops):
  *     cdef size_t op_count = ops.size()
  *     cdef list result_list = PyList_New(<Py_ssize_t>op_count)             # <<<<<<<<<<<<<<
  *     for i in range(op_count):
  *         result_item = (levenshtein_edit_type_to_str(ops[i].type), ops[i].src_pos, ops[i].dest_pos)
  */
-  __pyx_t_1 = PyList_New(((Py_ssize_t)__pyx_v_op_count)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 243, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(((Py_ssize_t)__pyx_v_op_count)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 244, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_result_list = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "cpp_string_metric.pyx":244
+  /* "cpp_string_metric.pyx":245
  *     cdef size_t op_count = ops.size()
  *     cdef list result_list = PyList_New(<Py_ssize_t>op_count)
  *     for i in range(op_count):             # <<<<<<<<<<<<<<
@@ -3629,20 +3696,20 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_editops_to_list(std::ve
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
-    /* "cpp_string_metric.pyx":245
+    /* "cpp_string_metric.pyx":246
  *     cdef list result_list = PyList_New(<Py_ssize_t>op_count)
  *     for i in range(op_count):
  *         result_item = (levenshtein_edit_type_to_str(ops[i].type), ops[i].src_pos, ops[i].dest_pos)             # <<<<<<<<<<<<<<
  *         Py_INCREF(result_item)
  *         PyList_SET_ITEM(result_list, <Py_ssize_t>i, result_item)
  */
-    __pyx_t_1 = __pyx_f_17cpp_string_metric_levenshtein_edit_type_to_str((__pyx_v_ops[__pyx_v_i]).type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 245, __pyx_L1_error)
+    __pyx_t_1 = __pyx_f_17cpp_string_metric_levenshtein_edit_type_to_str((__pyx_v_ops[__pyx_v_i]).type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 246, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_5 = __Pyx_PyInt_FromSize_t((__pyx_v_ops[__pyx_v_i]).src_pos); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 245, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_FromSize_t((__pyx_v_ops[__pyx_v_i]).src_pos); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 246, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = __Pyx_PyInt_FromSize_t((__pyx_v_ops[__pyx_v_i]).dest_pos); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 245, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyInt_FromSize_t((__pyx_v_ops[__pyx_v_i]).dest_pos); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 246, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7 = PyTuple_New(3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 245, __pyx_L1_error)
+    __pyx_t_7 = PyTuple_New(3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 246, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_1);
@@ -3656,7 +3723,7 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_editops_to_list(std::ve
     __Pyx_XDECREF_SET(__pyx_v_result_item, ((PyObject*)__pyx_t_7));
     __pyx_t_7 = 0;
 
-    /* "cpp_string_metric.pyx":246
+    /* "cpp_string_metric.pyx":247
  *     for i in range(op_count):
  *         result_item = (levenshtein_edit_type_to_str(ops[i].type), ops[i].src_pos, ops[i].dest_pos)
  *         Py_INCREF(result_item)             # <<<<<<<<<<<<<<
@@ -3665,7 +3732,7 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_editops_to_list(std::ve
  */
     Py_INCREF(__pyx_v_result_item);
 
-    /* "cpp_string_metric.pyx":247
+    /* "cpp_string_metric.pyx":248
  *         result_item = (levenshtein_edit_type_to_str(ops[i].type), ops[i].src_pos, ops[i].dest_pos)
  *         Py_INCREF(result_item)
  *         PyList_SET_ITEM(result_list, <Py_ssize_t>i, result_item)             # <<<<<<<<<<<<<<
@@ -3675,7 +3742,7 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_editops_to_list(std::ve
     PyList_SET_ITEM(__pyx_v_result_list, ((Py_ssize_t)__pyx_v_i), __pyx_v_result_item);
   }
 
-  /* "cpp_string_metric.pyx":249
+  /* "cpp_string_metric.pyx":250
  *         PyList_SET_ITEM(result_list, <Py_ssize_t>i, result_item)
  * 
  *     return result_list             # <<<<<<<<<<<<<<
@@ -3687,7 +3754,7 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_editops_to_list(std::ve
   __pyx_r = __pyx_v_result_list;
   goto __pyx_L0;
 
-  /* "cpp_string_metric.pyx":241
+  /* "cpp_string_metric.pyx":242
  *         return "replace"
  * 
  * cdef list levenshtein_editops_to_list(vector[LevenshteinEditOp] ops):             # <<<<<<<<<<<<<<
@@ -3711,7 +3778,7 @@ static PyObject *__pyx_f_17cpp_string_metric_levenshtein_editops_to_list(std::ve
   return __pyx_r;
 }
 
-/* "cpp_string_metric.pyx":251
+/* "cpp_string_metric.pyx":252
  *     return result_list
  * 
  * def levenshtein_editops(s1, s2, *, processor=None):             # <<<<<<<<<<<<<<
@@ -3771,25 +3838,25 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       switch (__pyx_nargs) {
         case  0:
         if (likely((values[0] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_s1)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 251, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 252, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
         if (likely((values[1] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_s2)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 251, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 252, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("levenshtein_editops", 1, 2, 2, 1); __PYX_ERR(0, 251, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("levenshtein_editops", 1, 2, 2, 1); __PYX_ERR(0, 252, __pyx_L3_error)
         }
       }
       if (kw_args == 1) {
         const Py_ssize_t index = 2;
         PyObject* value = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, *__pyx_pyargnames[index]);
         if (value) { values[index] = value; kw_args--; }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 251, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 252, __pyx_L3_error)
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "levenshtein_editops") < 0)) __PYX_ERR(0, 251, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "levenshtein_editops") < 0)) __PYX_ERR(0, 252, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
@@ -3803,7 +3870,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("levenshtein_editops", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 251, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("levenshtein_editops", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 252, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("cpp_string_metric.levenshtein_editops", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3817,6 +3884,8 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 }
 
 static PyObject *__pyx_pf_17cpp_string_metric_2levenshtein_editops(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_s1, PyObject *__pyx_v_s2, PyObject *__pyx_v_processor) {
+  proc_string __pyx_v_s1_proc;
+  proc_string __pyx_v_s2_proc;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -3826,9 +3895,9 @@ static PyObject *__pyx_pf_17cpp_string_metric_2levenshtein_editops(CYTHON_UNUSED
   PyObject *__pyx_t_5 = NULL;
   proc_string __pyx_t_6;
   proc_string __pyx_t_7;
-  std::vector<rapidfuzz::LevenshteinEditOp>  __pyx_t_8;
-  PyObject *__pyx_t_9 = NULL;
-  int __pyx_t_10;
+  PyObject *__pyx_t_8 = NULL;
+  int __pyx_t_9;
+  std::vector<rapidfuzz::LevenshteinEditOp>  __pyx_t_10;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -3836,12 +3905,12 @@ static PyObject *__pyx_pf_17cpp_string_metric_2levenshtein_editops(CYTHON_UNUSED
   __Pyx_INCREF(__pyx_v_s1);
   __Pyx_INCREF(__pyx_v_s2);
 
-  /* "cpp_string_metric.pyx":286
+  /* "cpp_string_metric.pyx":287
  *      insert s1[6] s2[6]
  *     """
  *     if processor is True or processor == default_process:             # <<<<<<<<<<<<<<
- *         return levenshtein_editops_to_list(
- *             levenshtein_editops_default_process(conv_sequence(s1), conv_sequence(s2))
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  */
   __pyx_t_2 = (__pyx_v_processor == Py_True);
   __pyx_t_3 = (__pyx_t_2 != 0);
@@ -3850,66 +3919,61 @@ static PyObject *__pyx_pf_17cpp_string_metric_2levenshtein_editops(CYTHON_UNUSED
     __pyx_t_1 = __pyx_t_3;
     goto __pyx_L4_bool_binop_done;
   }
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_default_process); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 286, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_default_process); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 287, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = PyObject_RichCompare(__pyx_v_processor, __pyx_t_4, Py_EQ); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 286, __pyx_L1_error)
+  __pyx_t_5 = PyObject_RichCompare(__pyx_v_processor, __pyx_t_4, Py_EQ); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 287, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 286, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 287, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_t_1 = __pyx_t_3;
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "cpp_string_metric.pyx":287
+    /* "cpp_string_metric.pyx":288
  *     """
  *     if processor is True or processor == default_process:
- *         return levenshtein_editops_to_list(             # <<<<<<<<<<<<<<
- *             levenshtein_editops_default_process(conv_sequence(s1), conv_sequence(s2))
- *         )
- */
-    __Pyx_XDECREF(__pyx_r);
-
-    /* "cpp_string_metric.pyx":288
- *     if processor is True or processor == default_process:
- *         return levenshtein_editops_to_list(
- *             levenshtein_editops_default_process(conv_sequence(s1), conv_sequence(s2))             # <<<<<<<<<<<<<<
- *         )
+ *         s1_proc = default_process_(conv_sequence(s1))             # <<<<<<<<<<<<<<
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):
  */
     __pyx_t_6 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 288, __pyx_L1_error)
-    __pyx_t_7 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 288, __pyx_L1_error)
     try {
-      __pyx_t_8 = levenshtein_editops_default_process(__pyx_t_6, __pyx_t_7);
+      __pyx_t_7 = default_process_(__pyx_t_6);
     } catch(...) {
       __Pyx_CppExn2PyErr();
       __PYX_ERR(0, 288, __pyx_L1_error)
     }
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_7);
+
+    /* "cpp_string_metric.pyx":289
+ *     if processor is True or processor == default_process:
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))             # <<<<<<<<<<<<<<
+ *     elif callable(processor):
+ *         s1 = processor(s1)
+ */
+    __pyx_t_7 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 289, __pyx_L1_error)
+    try {
+      __pyx_t_6 = default_process_(__pyx_t_7);
+    } catch(...) {
+      __Pyx_CppExn2PyErr();
+      __PYX_ERR(0, 289, __pyx_L1_error)
+    }
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_6);
 
     /* "cpp_string_metric.pyx":287
- *     """
- *     if processor is True or processor == default_process:
- *         return levenshtein_editops_to_list(             # <<<<<<<<<<<<<<
- *             levenshtein_editops_default_process(conv_sequence(s1), conv_sequence(s2))
- *         )
- */
-    __pyx_t_5 = __pyx_f_17cpp_string_metric_levenshtein_editops_to_list(__PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 287, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_5);
-    __pyx_r = __pyx_t_5;
-    __pyx_t_5 = 0;
-    goto __pyx_L0;
-
-    /* "cpp_string_metric.pyx":286
  *      insert s1[6] s2[6]
  *     """
  *     if processor is True or processor == default_process:             # <<<<<<<<<<<<<<
- *         return levenshtein_editops_to_list(
- *             levenshtein_editops_default_process(conv_sequence(s1), conv_sequence(s2))
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  */
+    goto __pyx_L3;
   }
 
   /* "cpp_string_metric.pyx":290
- *             levenshtein_editops_default_process(conv_sequence(s1), conv_sequence(s2))
- *         )
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):             # <<<<<<<<<<<<<<
  *         s1 = processor(s1)
  *         s2 = processor(s2)
@@ -3919,29 +3983,29 @@ static PyObject *__pyx_pf_17cpp_string_metric_2levenshtein_editops(CYTHON_UNUSED
   if (__pyx_t_3) {
 
     /* "cpp_string_metric.pyx":291
- *         )
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):
  *         s1 = processor(s1)             # <<<<<<<<<<<<<<
  *         s2 = processor(s2)
- * 
+ *         s1_proc = conv_sequence(s1)
  */
     __Pyx_INCREF(__pyx_v_processor);
-    __pyx_t_4 = __pyx_v_processor; __pyx_t_9 = NULL;
-    __pyx_t_10 = 0;
+    __pyx_t_4 = __pyx_v_processor; __pyx_t_8 = NULL;
+    __pyx_t_9 = 0;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_4);
-      if (likely(__pyx_t_9)) {
+      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
+      if (likely(__pyx_t_8)) {
         PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-        __Pyx_INCREF(__pyx_t_9);
+        __Pyx_INCREF(__pyx_t_8);
         __Pyx_INCREF(function);
         __Pyx_DECREF_SET(__pyx_t_4, function);
-        __pyx_t_10 = 1;
+        __pyx_t_9 = 1;
       }
     }
     {
-      PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_v_s1};
-      __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_10, 1+__pyx_t_10);
-      __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+      PyObject *__pyx_callargs[2] = {__pyx_t_8, __pyx_v_s1};
+      __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_9, 1+__pyx_t_9);
+      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
       if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 291, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -3953,26 +4017,26 @@ static PyObject *__pyx_pf_17cpp_string_metric_2levenshtein_editops(CYTHON_UNUSED
  *     elif callable(processor):
  *         s1 = processor(s1)
  *         s2 = processor(s2)             # <<<<<<<<<<<<<<
- * 
- *     return levenshtein_editops_to_list(
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)
  */
     __Pyx_INCREF(__pyx_v_processor);
-    __pyx_t_4 = __pyx_v_processor; __pyx_t_9 = NULL;
-    __pyx_t_10 = 0;
+    __pyx_t_4 = __pyx_v_processor; __pyx_t_8 = NULL;
+    __pyx_t_9 = 0;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_4);
-      if (likely(__pyx_t_9)) {
+      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_4);
+      if (likely(__pyx_t_8)) {
         PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-        __Pyx_INCREF(__pyx_t_9);
+        __Pyx_INCREF(__pyx_t_8);
         __Pyx_INCREF(function);
         __Pyx_DECREF_SET(__pyx_t_4, function);
-        __pyx_t_10 = 1;
+        __pyx_t_9 = 1;
       }
     }
     {
-      PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_v_s2};
-      __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_10, 1+__pyx_t_10);
-      __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+      PyObject *__pyx_callargs[2] = {__pyx_t_8, __pyx_v_s2};
+      __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_9, 1+__pyx_t_9);
+      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
       if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 292, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -3980,54 +4044,80 @@ static PyObject *__pyx_pf_17cpp_string_metric_2levenshtein_editops(CYTHON_UNUSED
     __Pyx_DECREF_SET(__pyx_v_s2, __pyx_t_5);
     __pyx_t_5 = 0;
 
+    /* "cpp_string_metric.pyx":293
+ *         s1 = processor(s1)
+ *         s2 = processor(s2)
+ *         s1_proc = conv_sequence(s1)             # <<<<<<<<<<<<<<
+ *         s2_proc = conv_sequence(s2)
+ *     else:
+ */
+    __pyx_t_6 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 293, __pyx_L1_error)
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_6);
+
+    /* "cpp_string_metric.pyx":294
+ *         s2 = processor(s2)
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)             # <<<<<<<<<<<<<<
+ *     else:
+ *         s1_proc = conv_sequence(s1)
+ */
+    __pyx_t_6 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 294, __pyx_L1_error)
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_6);
+
     /* "cpp_string_metric.pyx":290
- *             levenshtein_editops_default_process(conv_sequence(s1), conv_sequence(s2))
- *         )
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):             # <<<<<<<<<<<<<<
  *         s1 = processor(s1)
  *         s2 = processor(s2)
  */
+    goto __pyx_L3;
   }
 
-  /* "cpp_string_metric.pyx":294
- *         s2 = processor(s2)
+  /* "cpp_string_metric.pyx":296
+ *         s2_proc = conv_sequence(s2)
+ *     else:
+ *         s1_proc = conv_sequence(s1)             # <<<<<<<<<<<<<<
+ *         s2_proc = conv_sequence(s2)
  * 
- *     return levenshtein_editops_to_list(             # <<<<<<<<<<<<<<
- *         levenshtein_editops_no_process(conv_sequence(s1), conv_sequence(s2))
- *     )
+ */
+  /*else*/ {
+    __pyx_t_6 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 296, __pyx_L1_error)
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_6);
+
+    /* "cpp_string_metric.pyx":297
+ *     else:
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)             # <<<<<<<<<<<<<<
+ * 
+ *     return levenshtein_editops_to_list(cpp_levenshtein_editops(s1_proc, s2_proc))
+ */
+    __pyx_t_6 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 297, __pyx_L1_error)
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_6);
+  }
+  __pyx_L3:;
+
+  /* "cpp_string_metric.pyx":299
+ *         s2_proc = conv_sequence(s2)
+ * 
+ *     return levenshtein_editops_to_list(cpp_levenshtein_editops(s1_proc, s2_proc))             # <<<<<<<<<<<<<<
+ * 
+ * def normalized_levenshtein(s1, s2, *, weights=(1,1,1), processor=None, score_cutoff=None):
  */
   __Pyx_XDECREF(__pyx_r);
-
-  /* "cpp_string_metric.pyx":295
- * 
- *     return levenshtein_editops_to_list(
- *         levenshtein_editops_no_process(conv_sequence(s1), conv_sequence(s2))             # <<<<<<<<<<<<<<
- *     )
- * 
- */
-  __pyx_t_7 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 295, __pyx_L1_error)
-  __pyx_t_6 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 295, __pyx_L1_error)
   try {
-    __pyx_t_8 = levenshtein_editops_no_process(__pyx_t_7, __pyx_t_6);
+    __pyx_t_10 = cpp_levenshtein_editops(__pyx_v_s1_proc, __pyx_v_s2_proc);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 295, __pyx_L1_error)
+    __PYX_ERR(0, 299, __pyx_L1_error)
   }
-
-  /* "cpp_string_metric.pyx":294
- *         s2 = processor(s2)
- * 
- *     return levenshtein_editops_to_list(             # <<<<<<<<<<<<<<
- *         levenshtein_editops_no_process(conv_sequence(s1), conv_sequence(s2))
- *     )
- */
-  __pyx_t_5 = __pyx_f_17cpp_string_metric_levenshtein_editops_to_list(__PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 294, __pyx_L1_error)
+  __pyx_t_5 = __pyx_f_17cpp_string_metric_levenshtein_editops_to_list(__PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_10)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 299, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_r = __pyx_t_5;
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "cpp_string_metric.pyx":251
+  /* "cpp_string_metric.pyx":252
  *     return result_list
  * 
  * def levenshtein_editops(s1, s2, *, processor=None):             # <<<<<<<<<<<<<<
@@ -4039,7 +4129,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_2levenshtein_editops(CYTHON_UNUSED
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_8);
   __Pyx_AddTraceback("cpp_string_metric.levenshtein_editops", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -4050,8 +4140,8 @@ static PyObject *__pyx_pf_17cpp_string_metric_2levenshtein_editops(CYTHON_UNUSED
   return __pyx_r;
 }
 
-/* "cpp_string_metric.pyx":298
- *     )
+/* "cpp_string_metric.pyx":301
+ *     return levenshtein_editops_to_list(cpp_levenshtein_editops(s1_proc, s2_proc))
  * 
  * def normalized_levenshtein(s1, s2, *, weights=(1,1,1), processor=None, score_cutoff=None):             # <<<<<<<<<<<<<<
  *     """
@@ -4114,14 +4204,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       switch (__pyx_nargs) {
         case  0:
         if (likely((values[0] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_s1)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 298, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 301, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
         if (likely((values[1] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_s2)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 298, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 301, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("normalized_levenshtein", 1, 2, 2, 1); __PYX_ERR(0, 298, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("normalized_levenshtein", 1, 2, 2, 1); __PYX_ERR(0, 301, __pyx_L3_error)
         }
       }
       if (kw_args > 0 && likely(kw_args <= 3)) {
@@ -4129,12 +4219,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
         for (index = 2; index < 5 && kw_args > 0; index++) {
           PyObject* value = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, *__pyx_pyargnames[index]);
           if (value) { values[index] = value; kw_args--; }
-          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 298, __pyx_L3_error)
+          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 301, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "normalized_levenshtein") < 0)) __PYX_ERR(0, 298, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "normalized_levenshtein") < 0)) __PYX_ERR(0, 301, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
@@ -4150,7 +4240,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("normalized_levenshtein", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 298, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("normalized_levenshtein", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 301, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("cpp_string_metric.normalized_levenshtein", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4168,6 +4258,8 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
   size_t __pyx_v_deletion;
   size_t __pyx_v_substitution;
   double __pyx_v_c_score_cutoff;
+  proc_string __pyx_v_s1_proc;
+  proc_string __pyx_v_s2_proc;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -4193,7 +4285,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
   __Pyx_INCREF(__pyx_v_s1);
   __Pyx_INCREF(__pyx_v_s2);
 
-  /* "cpp_string_metric.pyx":383
+  /* "cpp_string_metric.pyx":386
  *     81.81818181818181
  *     """
  *     if s1 is None or s2 is None:             # <<<<<<<<<<<<<<
@@ -4213,7 +4305,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "cpp_string_metric.pyx":384
+    /* "cpp_string_metric.pyx":387
  *     """
  *     if s1 is None or s2 is None:
  *         return 0             # <<<<<<<<<<<<<<
@@ -4225,7 +4317,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
     __pyx_r = __pyx_int_0;
     goto __pyx_L0;
 
-    /* "cpp_string_metric.pyx":383
+    /* "cpp_string_metric.pyx":386
  *     81.81818181818181
  *     """
  *     if s1 is None or s2 is None:             # <<<<<<<<<<<<<<
@@ -4234,7 +4326,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
  */
   }
 
-  /* "cpp_string_metric.pyx":387
+  /* "cpp_string_metric.pyx":390
  * 
  *     cdef size_t insertion, deletion, substitution
  *     insertion = deletion = substitution = 1             # <<<<<<<<<<<<<<
@@ -4245,7 +4337,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
   __pyx_v_deletion = 1;
   __pyx_v_substitution = 1;
 
-  /* "cpp_string_metric.pyx":388
+  /* "cpp_string_metric.pyx":391
  *     cdef size_t insertion, deletion, substitution
  *     insertion = deletion = substitution = 1
  *     if weights is not None:             # <<<<<<<<<<<<<<
@@ -4256,7 +4348,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "cpp_string_metric.pyx":389
+    /* "cpp_string_metric.pyx":392
  *     insertion = deletion = substitution = 1
  *     if weights is not None:
  *         insertion, deletion, substitution = weights             # <<<<<<<<<<<<<<
@@ -4269,7 +4361,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
       if (unlikely(size != 3)) {
         if (size > 3) __Pyx_RaiseTooManyValuesError(3);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 389, __pyx_L1_error)
+        __PYX_ERR(0, 392, __pyx_L1_error)
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -4285,16 +4377,16 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
       __Pyx_INCREF(__pyx_t_5);
       __Pyx_INCREF(__pyx_t_6);
       #else
-      __pyx_t_4 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 389, __pyx_L1_error)
+      __pyx_t_4 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 392, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 389, __pyx_L1_error)
+      __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 392, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 389, __pyx_L1_error)
+      __pyx_t_6 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 392, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       #endif
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_7 = PyObject_GetIter(__pyx_v_weights); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 389, __pyx_L1_error)
+      __pyx_t_7 = PyObject_GetIter(__pyx_v_weights); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 392, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __pyx_t_8 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_7);
       index = 0; __pyx_t_4 = __pyx_t_8(__pyx_t_7); if (unlikely(!__pyx_t_4)) goto __pyx_L7_unpacking_failed;
@@ -4303,7 +4395,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
       __Pyx_GOTREF(__pyx_t_5);
       index = 2; __pyx_t_6 = __pyx_t_8(__pyx_t_7); if (unlikely(!__pyx_t_6)) goto __pyx_L7_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_6);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_8(__pyx_t_7), 3) < 0) __PYX_ERR(0, 389, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_8(__pyx_t_7), 3) < 0) __PYX_ERR(0, 392, __pyx_L1_error)
       __pyx_t_8 = NULL;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       goto __pyx_L8_unpacking_done;
@@ -4311,20 +4403,20 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __pyx_t_8 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 389, __pyx_L1_error)
+      __PYX_ERR(0, 392, __pyx_L1_error)
       __pyx_L8_unpacking_done:;
     }
-    __pyx_t_9 = __Pyx_PyInt_As_size_t(__pyx_t_4); if (unlikely((__pyx_t_9 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 389, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyInt_As_size_t(__pyx_t_4); if (unlikely((__pyx_t_9 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 392, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_10 = __Pyx_PyInt_As_size_t(__pyx_t_5); if (unlikely((__pyx_t_10 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 389, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyInt_As_size_t(__pyx_t_5); if (unlikely((__pyx_t_10 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 392, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_11 = __Pyx_PyInt_As_size_t(__pyx_t_6); if (unlikely((__pyx_t_11 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 389, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyInt_As_size_t(__pyx_t_6); if (unlikely((__pyx_t_11 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 392, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __pyx_v_insertion = __pyx_t_9;
     __pyx_v_deletion = __pyx_t_10;
     __pyx_v_substitution = __pyx_t_11;
 
-    /* "cpp_string_metric.pyx":388
+    /* "cpp_string_metric.pyx":391
  *     cdef size_t insertion, deletion, substitution
  *     insertion = deletion = substitution = 1
  *     if weights is not None:             # <<<<<<<<<<<<<<
@@ -4333,7 +4425,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
  */
   }
 
-  /* "cpp_string_metric.pyx":391
+  /* "cpp_string_metric.pyx":394
  *         insertion, deletion, substitution = weights
  * 
  *     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff             # <<<<<<<<<<<<<<
@@ -4344,17 +4436,17 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
   if ((__pyx_t_2 != 0)) {
     __pyx_t_12 = 0.0;
   } else {
-    __pyx_t_13 = __pyx_PyFloat_AsDouble(__pyx_v_score_cutoff); if (unlikely((__pyx_t_13 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 391, __pyx_L1_error)
+    __pyx_t_13 = __pyx_PyFloat_AsDouble(__pyx_v_score_cutoff); if (unlikely((__pyx_t_13 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 394, __pyx_L1_error)
     __pyx_t_12 = __pyx_t_13;
   }
   __pyx_v_c_score_cutoff = __pyx_t_12;
 
-  /* "cpp_string_metric.pyx":393
+  /* "cpp_string_metric.pyx":396
  *     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
  * 
  *     if processor is True or processor == default_process:             # <<<<<<<<<<<<<<
- *         return normalized_levenshtein_default_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_score_cutoff)
- *     elif callable(processor):
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  */
   __pyx_t_1 = (__pyx_v_processor == Py_True);
   __pyx_t_3 = (__pyx_t_1 != 0);
@@ -4363,64 +4455,75 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
     __pyx_t_2 = __pyx_t_3;
     goto __pyx_L10_bool_binop_done;
   }
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_default_process); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 393, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_default_process); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 396, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_5 = PyObject_RichCompare(__pyx_v_processor, __pyx_t_6, Py_EQ); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 393, __pyx_L1_error)
+  __pyx_t_5 = PyObject_RichCompare(__pyx_v_processor, __pyx_t_6, Py_EQ); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 396, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 393, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 396, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_t_2 = __pyx_t_3;
   __pyx_L10_bool_binop_done:;
   if (__pyx_t_2) {
 
-    /* "cpp_string_metric.pyx":394
+    /* "cpp_string_metric.pyx":397
  * 
  *     if processor is True or processor == default_process:
- *         return normalized_levenshtein_default_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_score_cutoff)             # <<<<<<<<<<<<<<
+ *         s1_proc = default_process_(conv_sequence(s1))             # <<<<<<<<<<<<<<
+ *         s2_proc = default_process_(conv_sequence(s2))
+ *     elif callable(processor):
+ */
+    __pyx_t_14 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 397, __pyx_L1_error)
+    try {
+      __pyx_t_15 = default_process_(__pyx_t_14);
+    } catch(...) {
+      __Pyx_CppExn2PyErr();
+      __PYX_ERR(0, 397, __pyx_L1_error)
+    }
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_15);
+
+    /* "cpp_string_metric.pyx":398
+ *     if processor is True or processor == default_process:
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))             # <<<<<<<<<<<<<<
  *     elif callable(processor):
  *         s1 = processor(s1)
  */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_14 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 394, __pyx_L1_error)
-    __pyx_t_15 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 394, __pyx_L1_error)
+    __pyx_t_15 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 398, __pyx_L1_error)
     try {
-      __pyx_t_12 = normalized_levenshtein_default_process(__pyx_t_14, __pyx_t_15, __pyx_v_insertion, __pyx_v_deletion, __pyx_v_substitution, __pyx_v_c_score_cutoff);
+      __pyx_t_14 = default_process_(__pyx_t_15);
     } catch(...) {
       __Pyx_CppExn2PyErr();
-      __PYX_ERR(0, 394, __pyx_L1_error)
+      __PYX_ERR(0, 398, __pyx_L1_error)
     }
-    __pyx_t_5 = PyFloat_FromDouble(__pyx_t_12); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 394, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_5);
-    __pyx_r = __pyx_t_5;
-    __pyx_t_5 = 0;
-    goto __pyx_L0;
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_14);
 
-    /* "cpp_string_metric.pyx":393
+    /* "cpp_string_metric.pyx":396
  *     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
  * 
  *     if processor is True or processor == default_process:             # <<<<<<<<<<<<<<
- *         return normalized_levenshtein_default_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_score_cutoff)
- *     elif callable(processor):
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  */
+    goto __pyx_L9;
   }
 
-  /* "cpp_string_metric.pyx":395
- *     if processor is True or processor == default_process:
- *         return normalized_levenshtein_default_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_score_cutoff)
+  /* "cpp_string_metric.pyx":399
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):             # <<<<<<<<<<<<<<
  *         s1 = processor(s1)
  *         s2 = processor(s2)
  */
-  __pyx_t_2 = __Pyx_PyCallable_Check(__pyx_v_processor); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(0, 395, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyCallable_Check(__pyx_v_processor); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(0, 399, __pyx_L1_error)
   __pyx_t_3 = (__pyx_t_2 != 0);
   if (__pyx_t_3) {
 
-    /* "cpp_string_metric.pyx":396
- *         return normalized_levenshtein_default_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_score_cutoff)
+    /* "cpp_string_metric.pyx":400
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):
  *         s1 = processor(s1)             # <<<<<<<<<<<<<<
  *         s2 = processor(s2)
- * 
+ *         s1_proc = conv_sequence(s1)
  */
     __Pyx_INCREF(__pyx_v_processor);
     __pyx_t_6 = __pyx_v_processor; __pyx_t_4 = NULL;
@@ -4439,19 +4542,19 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
       PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_s1};
       __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_16, 1+__pyx_t_16);
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 396, __pyx_L1_error)
+      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 400, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     }
     __Pyx_DECREF_SET(__pyx_v_s1, __pyx_t_5);
     __pyx_t_5 = 0;
 
-    /* "cpp_string_metric.pyx":397
+    /* "cpp_string_metric.pyx":401
  *     elif callable(processor):
  *         s1 = processor(s1)
  *         s2 = processor(s2)             # <<<<<<<<<<<<<<
- * 
- *     return normalized_levenshtein_no_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_score_cutoff)
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)
  */
     __Pyx_INCREF(__pyx_v_processor);
     __pyx_t_6 = __pyx_v_processor; __pyx_t_4 = NULL;
@@ -4470,46 +4573,88 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
       PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_s2};
       __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_16, 1+__pyx_t_16);
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 397, __pyx_L1_error)
+      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 401, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     }
     __Pyx_DECREF_SET(__pyx_v_s2, __pyx_t_5);
     __pyx_t_5 = 0;
 
-    /* "cpp_string_metric.pyx":395
- *     if processor is True or processor == default_process:
- *         return normalized_levenshtein_default_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_score_cutoff)
+    /* "cpp_string_metric.pyx":402
+ *         s1 = processor(s1)
+ *         s2 = processor(s2)
+ *         s1_proc = conv_sequence(s1)             # <<<<<<<<<<<<<<
+ *         s2_proc = conv_sequence(s2)
+ *     else:
+ */
+    __pyx_t_14 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 402, __pyx_L1_error)
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_14);
+
+    /* "cpp_string_metric.pyx":403
+ *         s2 = processor(s2)
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)             # <<<<<<<<<<<<<<
+ *     else:
+ *         s1_proc = conv_sequence(s1)
+ */
+    __pyx_t_14 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 403, __pyx_L1_error)
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_14);
+
+    /* "cpp_string_metric.pyx":399
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):             # <<<<<<<<<<<<<<
  *         s1 = processor(s1)
  *         s2 = processor(s2)
  */
+    goto __pyx_L9;
   }
 
-  /* "cpp_string_metric.pyx":399
- *         s2 = processor(s2)
+  /* "cpp_string_metric.pyx":405
+ *         s2_proc = conv_sequence(s2)
+ *     else:
+ *         s1_proc = conv_sequence(s1)             # <<<<<<<<<<<<<<
+ *         s2_proc = conv_sequence(s2)
  * 
- *     return normalized_levenshtein_no_process(conv_sequence(s1), conv_sequence(s2), insertion, deletion, substitution, c_score_cutoff)             # <<<<<<<<<<<<<<
+ */
+  /*else*/ {
+    __pyx_t_14 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 405, __pyx_L1_error)
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_14);
+
+    /* "cpp_string_metric.pyx":406
+ *     else:
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)             # <<<<<<<<<<<<<<
+ * 
+ *     return cpp_normalized_levenshtein(s1_proc, s2_proc, insertion, deletion, substitution, c_score_cutoff)
+ */
+    __pyx_t_14 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 406, __pyx_L1_error)
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_14);
+  }
+  __pyx_L9:;
+
+  /* "cpp_string_metric.pyx":408
+ *         s2_proc = conv_sequence(s2)
+ * 
+ *     return cpp_normalized_levenshtein(s1_proc, s2_proc, insertion, deletion, substitution, c_score_cutoff)             # <<<<<<<<<<<<<<
  * 
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_15 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 399, __pyx_L1_error)
-  __pyx_t_14 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 399, __pyx_L1_error)
   try {
-    __pyx_t_12 = normalized_levenshtein_no_process(__pyx_t_15, __pyx_t_14, __pyx_v_insertion, __pyx_v_deletion, __pyx_v_substitution, __pyx_v_c_score_cutoff);
+    __pyx_t_12 = cpp_normalized_levenshtein(__pyx_v_s1_proc, __pyx_v_s2_proc, __pyx_v_insertion, __pyx_v_deletion, __pyx_v_substitution, __pyx_v_c_score_cutoff);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 399, __pyx_L1_error)
+    __PYX_ERR(0, 408, __pyx_L1_error)
   }
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_t_12); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 399, __pyx_L1_error)
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_t_12); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 408, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_r = __pyx_t_5;
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "cpp_string_metric.pyx":298
- *     )
+  /* "cpp_string_metric.pyx":301
+ *     return levenshtein_editops_to_list(cpp_levenshtein_editops(s1_proc, s2_proc))
  * 
  * def normalized_levenshtein(s1, s2, *, weights=(1,1,1), processor=None, score_cutoff=None):             # <<<<<<<<<<<<<<
  *     """
@@ -4532,7 +4677,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_4normalized_levenshtein(CYTHON_UNU
   return __pyx_r;
 }
 
-/* "cpp_string_metric.pyx":402
+/* "cpp_string_metric.pyx":411
  * 
  * 
  * def hamming(s1, s2, *, processor=None, max=None):             # <<<<<<<<<<<<<<
@@ -4594,14 +4739,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       switch (__pyx_nargs) {
         case  0:
         if (likely((values[0] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_s1)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 402, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 411, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
         if (likely((values[1] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_s2)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 402, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 411, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("hamming", 1, 2, 2, 1); __PYX_ERR(0, 402, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("hamming", 1, 2, 2, 1); __PYX_ERR(0, 411, __pyx_L3_error)
         }
       }
       if (kw_args > 0 && likely(kw_args <= 2)) {
@@ -4609,12 +4754,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
         for (index = 2; index < 4 && kw_args > 0; index++) {
           PyObject* value = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, *__pyx_pyargnames[index]);
           if (value) { values[index] = value; kw_args--; }
-          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 402, __pyx_L3_error)
+          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 411, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "hamming") < 0)) __PYX_ERR(0, 402, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "hamming") < 0)) __PYX_ERR(0, 411, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
@@ -4629,7 +4774,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("hamming", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 402, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("hamming", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 411, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("cpp_string_metric.hamming", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4644,6 +4789,8 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 
 static PyObject *__pyx_pf_17cpp_string_metric_6hamming(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_s1, PyObject *__pyx_v_s2, PyObject *__pyx_v_processor, PyObject *__pyx_v_max) {
   size_t __pyx_v_c_max;
+  proc_string __pyx_v_s1_proc;
+  proc_string __pyx_v_s2_proc;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   size_t __pyx_t_1;
@@ -4664,7 +4811,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_6hamming(CYTHON_UNUSED PyObject *_
   __Pyx_INCREF(__pyx_v_s1);
   __Pyx_INCREF(__pyx_v_s2);
 
-  /* "cpp_string_metric.pyx":435
+  /* "cpp_string_metric.pyx":444
  *         If s1 and s2 have a different length
  *     """
  *     cdef size_t c_max = <size_t>-1 if max is None else max             # <<<<<<<<<<<<<<
@@ -4675,12 +4822,12 @@ static PyObject *__pyx_pf_17cpp_string_metric_6hamming(CYTHON_UNUSED PyObject *_
   if ((__pyx_t_2 != 0)) {
     __pyx_t_1 = ((size_t)-1L);
   } else {
-    __pyx_t_3 = __Pyx_PyInt_As_size_t(__pyx_v_max); if (unlikely((__pyx_t_3 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 435, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_As_size_t(__pyx_v_max); if (unlikely((__pyx_t_3 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 444, __pyx_L1_error)
     __pyx_t_1 = __pyx_t_3;
   }
   __pyx_v_c_max = __pyx_t_1;
 
-  /* "cpp_string_metric.pyx":437
+  /* "cpp_string_metric.pyx":446
  *     cdef size_t c_max = <size_t>-1 if max is None else max
  * 
  *     if s1 is None or s2 is None:             # <<<<<<<<<<<<<<
@@ -4700,7 +4847,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_6hamming(CYTHON_UNUSED PyObject *_
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_2) {
 
-    /* "cpp_string_metric.pyx":438
+    /* "cpp_string_metric.pyx":447
  * 
  *     if s1 is None or s2 is None:
  *         return 0             # <<<<<<<<<<<<<<
@@ -4712,7 +4859,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_6hamming(CYTHON_UNUSED PyObject *_
     __pyx_r = __pyx_int_0;
     goto __pyx_L0;
 
-    /* "cpp_string_metric.pyx":437
+    /* "cpp_string_metric.pyx":446
  *     cdef size_t c_max = <size_t>-1 if max is None else max
  * 
  *     if s1 is None or s2 is None:             # <<<<<<<<<<<<<<
@@ -4721,12 +4868,12 @@ static PyObject *__pyx_pf_17cpp_string_metric_6hamming(CYTHON_UNUSED PyObject *_
  */
   }
 
-  /* "cpp_string_metric.pyx":440
+  /* "cpp_string_metric.pyx":449
  *         return 0
  * 
  *     if processor is True or processor == default_process:             # <<<<<<<<<<<<<<
- *         return hamming_default_process(conv_sequence(s1), conv_sequence(s2), c_max)
- *     elif callable(processor):
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  */
   __pyx_t_4 = (__pyx_v_processor == Py_True);
   __pyx_t_5 = (__pyx_t_4 != 0);
@@ -4735,64 +4882,75 @@ static PyObject *__pyx_pf_17cpp_string_metric_6hamming(CYTHON_UNUSED PyObject *_
     __pyx_t_2 = __pyx_t_5;
     goto __pyx_L7_bool_binop_done;
   }
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_default_process); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 440, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_default_process); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 449, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_7 = PyObject_RichCompare(__pyx_v_processor, __pyx_t_6, Py_EQ); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 440, __pyx_L1_error)
+  __pyx_t_7 = PyObject_RichCompare(__pyx_v_processor, __pyx_t_6, Py_EQ); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 449, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 440, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 449, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __pyx_t_2 = __pyx_t_5;
   __pyx_L7_bool_binop_done:;
   if (__pyx_t_2) {
 
-    /* "cpp_string_metric.pyx":441
+    /* "cpp_string_metric.pyx":450
  * 
  *     if processor is True or processor == default_process:
- *         return hamming_default_process(conv_sequence(s1), conv_sequence(s2), c_max)             # <<<<<<<<<<<<<<
+ *         s1_proc = default_process_(conv_sequence(s1))             # <<<<<<<<<<<<<<
+ *         s2_proc = default_process_(conv_sequence(s2))
+ *     elif callable(processor):
+ */
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 450, __pyx_L1_error)
+    try {
+      __pyx_t_9 = default_process_(__pyx_t_8);
+    } catch(...) {
+      __Pyx_CppExn2PyErr();
+      __PYX_ERR(0, 450, __pyx_L1_error)
+    }
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_9);
+
+    /* "cpp_string_metric.pyx":451
+ *     if processor is True or processor == default_process:
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))             # <<<<<<<<<<<<<<
  *     elif callable(processor):
  *         s1 = processor(s1)
  */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 441, __pyx_L1_error)
-    __pyx_t_9 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 441, __pyx_L1_error)
+    __pyx_t_9 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 451, __pyx_L1_error)
     try {
-      __pyx_t_7 = hamming_default_process(__pyx_t_8, __pyx_t_9, __pyx_v_c_max);
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 441, __pyx_L1_error)
+      __pyx_t_8 = default_process_(__pyx_t_9);
     } catch(...) {
       __Pyx_CppExn2PyErr();
-      __PYX_ERR(0, 441, __pyx_L1_error)
+      __PYX_ERR(0, 451, __pyx_L1_error)
     }
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
 
-    /* "cpp_string_metric.pyx":440
+    /* "cpp_string_metric.pyx":449
  *         return 0
  * 
  *     if processor is True or processor == default_process:             # <<<<<<<<<<<<<<
- *         return hamming_default_process(conv_sequence(s1), conv_sequence(s2), c_max)
- *     elif callable(processor):
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  */
+    goto __pyx_L6;
   }
 
-  /* "cpp_string_metric.pyx":442
- *     if processor is True or processor == default_process:
- *         return hamming_default_process(conv_sequence(s1), conv_sequence(s2), c_max)
+  /* "cpp_string_metric.pyx":452
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):             # <<<<<<<<<<<<<<
  *         s1 = processor(s1)
  *         s2 = processor(s2)
  */
-  __pyx_t_2 = __Pyx_PyCallable_Check(__pyx_v_processor); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(0, 442, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyCallable_Check(__pyx_v_processor); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(0, 452, __pyx_L1_error)
   __pyx_t_5 = (__pyx_t_2 != 0);
   if (__pyx_t_5) {
 
-    /* "cpp_string_metric.pyx":443
- *         return hamming_default_process(conv_sequence(s1), conv_sequence(s2), c_max)
+    /* "cpp_string_metric.pyx":453
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):
  *         s1 = processor(s1)             # <<<<<<<<<<<<<<
  *         s2 = processor(s2)
- * 
+ *         s1_proc = conv_sequence(s1)
  */
     __Pyx_INCREF(__pyx_v_processor);
     __pyx_t_6 = __pyx_v_processor; __pyx_t_10 = NULL;
@@ -4811,19 +4969,19 @@ static PyObject *__pyx_pf_17cpp_string_metric_6hamming(CYTHON_UNUSED PyObject *_
       PyObject *__pyx_callargs[2] = {__pyx_t_10, __pyx_v_s1};
       __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_11, 1+__pyx_t_11);
       __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 443, __pyx_L1_error)
+      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 453, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     }
     __Pyx_DECREF_SET(__pyx_v_s1, __pyx_t_7);
     __pyx_t_7 = 0;
 
-    /* "cpp_string_metric.pyx":444
+    /* "cpp_string_metric.pyx":454
  *     elif callable(processor):
  *         s1 = processor(s1)
  *         s2 = processor(s2)             # <<<<<<<<<<<<<<
- * 
- *     return hamming_no_process(conv_sequence(s1), conv_sequence(s2), c_max)
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)
  */
     __Pyx_INCREF(__pyx_v_processor);
     __pyx_t_6 = __pyx_v_processor; __pyx_t_10 = NULL;
@@ -4842,45 +5000,87 @@ static PyObject *__pyx_pf_17cpp_string_metric_6hamming(CYTHON_UNUSED PyObject *_
       PyObject *__pyx_callargs[2] = {__pyx_t_10, __pyx_v_s2};
       __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_11, 1+__pyx_t_11);
       __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 444, __pyx_L1_error)
+      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 454, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     }
     __Pyx_DECREF_SET(__pyx_v_s2, __pyx_t_7);
     __pyx_t_7 = 0;
 
-    /* "cpp_string_metric.pyx":442
- *     if processor is True or processor == default_process:
- *         return hamming_default_process(conv_sequence(s1), conv_sequence(s2), c_max)
+    /* "cpp_string_metric.pyx":455
+ *         s1 = processor(s1)
+ *         s2 = processor(s2)
+ *         s1_proc = conv_sequence(s1)             # <<<<<<<<<<<<<<
+ *         s2_proc = conv_sequence(s2)
+ *     else:
+ */
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 455, __pyx_L1_error)
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
+
+    /* "cpp_string_metric.pyx":456
+ *         s2 = processor(s2)
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)             # <<<<<<<<<<<<<<
+ *     else:
+ *         s1_proc = conv_sequence(s1)
+ */
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 456, __pyx_L1_error)
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
+
+    /* "cpp_string_metric.pyx":452
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):             # <<<<<<<<<<<<<<
  *         s1 = processor(s1)
  *         s2 = processor(s2)
  */
+    goto __pyx_L6;
   }
 
-  /* "cpp_string_metric.pyx":446
- *         s2 = processor(s2)
+  /* "cpp_string_metric.pyx":458
+ *         s2_proc = conv_sequence(s2)
+ *     else:
+ *         s1_proc = conv_sequence(s1)             # <<<<<<<<<<<<<<
+ *         s2_proc = conv_sequence(s2)
  * 
- *     return hamming_no_process(conv_sequence(s1), conv_sequence(s2), c_max)             # <<<<<<<<<<<<<<
+ */
+  /*else*/ {
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 458, __pyx_L1_error)
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
+
+    /* "cpp_string_metric.pyx":459
+ *     else:
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)             # <<<<<<<<<<<<<<
+ * 
+ *     return cpp_hamming(s1_proc, s2_proc, c_max)
+ */
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 459, __pyx_L1_error)
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
+  }
+  __pyx_L6:;
+
+  /* "cpp_string_metric.pyx":461
+ *         s2_proc = conv_sequence(s2)
+ * 
+ *     return cpp_hamming(s1_proc, s2_proc, c_max)             # <<<<<<<<<<<<<<
  * 
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_9 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 446, __pyx_L1_error)
-  __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 446, __pyx_L1_error)
   try {
-    __pyx_t_7 = hamming_no_process(__pyx_t_9, __pyx_t_8, __pyx_v_c_max);
-    if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 446, __pyx_L1_error)
+    __pyx_t_7 = cpp_hamming(__pyx_v_s1_proc, __pyx_v_s2_proc, __pyx_v_c_max);
+    if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 461, __pyx_L1_error)
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 446, __pyx_L1_error)
+    __PYX_ERR(0, 461, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_7);
   __pyx_r = __pyx_t_7;
   __pyx_t_7 = 0;
   goto __pyx_L0;
 
-  /* "cpp_string_metric.pyx":402
+  /* "cpp_string_metric.pyx":411
  * 
  * 
  * def hamming(s1, s2, *, processor=None, max=None):             # <<<<<<<<<<<<<<
@@ -4903,7 +5103,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_6hamming(CYTHON_UNUSED PyObject *_
   return __pyx_r;
 }
 
-/* "cpp_string_metric.pyx":449
+/* "cpp_string_metric.pyx":464
  * 
  * 
  * def normalized_hamming(s1, s2, *, processor=None, score_cutoff=None):             # <<<<<<<<<<<<<<
@@ -4965,14 +5165,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       switch (__pyx_nargs) {
         case  0:
         if (likely((values[0] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_s1)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 449, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 464, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
         if (likely((values[1] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_s2)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 449, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 464, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("normalized_hamming", 1, 2, 2, 1); __PYX_ERR(0, 449, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("normalized_hamming", 1, 2, 2, 1); __PYX_ERR(0, 464, __pyx_L3_error)
         }
       }
       if (kw_args > 0 && likely(kw_args <= 2)) {
@@ -4980,12 +5180,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
         for (index = 2; index < 4 && kw_args > 0; index++) {
           PyObject* value = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, *__pyx_pyargnames[index]);
           if (value) { values[index] = value; kw_args--; }
-          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 449, __pyx_L3_error)
+          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 464, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "normalized_hamming") < 0)) __PYX_ERR(0, 449, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "normalized_hamming") < 0)) __PYX_ERR(0, 464, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
@@ -5000,7 +5200,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("normalized_hamming", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 449, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("normalized_hamming", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 464, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("cpp_string_metric.normalized_hamming", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -5015,6 +5215,8 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 
 static PyObject *__pyx_pf_17cpp_string_metric_8normalized_hamming(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_s1, PyObject *__pyx_v_s2, PyObject *__pyx_v_processor, PyObject *__pyx_v_score_cutoff) {
   double __pyx_v_c_score_cutoff;
+  proc_string __pyx_v_s1_proc;
+  proc_string __pyx_v_s2_proc;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   double __pyx_t_1;
@@ -5035,7 +5237,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_8normalized_hamming(CYTHON_UNUSED 
   __Pyx_INCREF(__pyx_v_s1);
   __Pyx_INCREF(__pyx_v_s2);
 
-  /* "cpp_string_metric.pyx":482
+  /* "cpp_string_metric.pyx":497
  *     hamming : Hamming distance
  *     """
  *     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff             # <<<<<<<<<<<<<<
@@ -5046,12 +5248,12 @@ static PyObject *__pyx_pf_17cpp_string_metric_8normalized_hamming(CYTHON_UNUSED 
   if ((__pyx_t_2 != 0)) {
     __pyx_t_1 = 0.0;
   } else {
-    __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_v_score_cutoff); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 482, __pyx_L1_error)
+    __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_v_score_cutoff); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 497, __pyx_L1_error)
     __pyx_t_1 = __pyx_t_3;
   }
   __pyx_v_c_score_cutoff = __pyx_t_1;
 
-  /* "cpp_string_metric.pyx":484
+  /* "cpp_string_metric.pyx":499
  *     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
  * 
  *     if s1 is None or s2 is None:             # <<<<<<<<<<<<<<
@@ -5071,7 +5273,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_8normalized_hamming(CYTHON_UNUSED 
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_2) {
 
-    /* "cpp_string_metric.pyx":485
+    /* "cpp_string_metric.pyx":500
  * 
  *     if s1 is None or s2 is None:
  *         return 0             # <<<<<<<<<<<<<<
@@ -5083,7 +5285,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_8normalized_hamming(CYTHON_UNUSED 
     __pyx_r = __pyx_int_0;
     goto __pyx_L0;
 
-    /* "cpp_string_metric.pyx":484
+    /* "cpp_string_metric.pyx":499
  *     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
  * 
  *     if s1 is None or s2 is None:             # <<<<<<<<<<<<<<
@@ -5092,12 +5294,12 @@ static PyObject *__pyx_pf_17cpp_string_metric_8normalized_hamming(CYTHON_UNUSED 
  */
   }
 
-  /* "cpp_string_metric.pyx":487
+  /* "cpp_string_metric.pyx":502
  *         return 0
  * 
  *     if processor is True or processor == default_process:             # <<<<<<<<<<<<<<
- *         return normalized_hamming_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
- *     elif callable(processor):
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  */
   __pyx_t_4 = (__pyx_v_processor == Py_True);
   __pyx_t_5 = (__pyx_t_4 != 0);
@@ -5106,64 +5308,75 @@ static PyObject *__pyx_pf_17cpp_string_metric_8normalized_hamming(CYTHON_UNUSED 
     __pyx_t_2 = __pyx_t_5;
     goto __pyx_L7_bool_binop_done;
   }
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_default_process); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 487, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_default_process); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 502, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_7 = PyObject_RichCompare(__pyx_v_processor, __pyx_t_6, Py_EQ); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 487, __pyx_L1_error)
+  __pyx_t_7 = PyObject_RichCompare(__pyx_v_processor, __pyx_t_6, Py_EQ); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 502, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 487, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 502, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __pyx_t_2 = __pyx_t_5;
   __pyx_L7_bool_binop_done:;
   if (__pyx_t_2) {
 
-    /* "cpp_string_metric.pyx":488
+    /* "cpp_string_metric.pyx":503
  * 
  *     if processor is True or processor == default_process:
- *         return normalized_hamming_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)             # <<<<<<<<<<<<<<
+ *         s1_proc = default_process_(conv_sequence(s1))             # <<<<<<<<<<<<<<
+ *         s2_proc = default_process_(conv_sequence(s2))
+ *     elif callable(processor):
+ */
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 503, __pyx_L1_error)
+    try {
+      __pyx_t_9 = default_process_(__pyx_t_8);
+    } catch(...) {
+      __Pyx_CppExn2PyErr();
+      __PYX_ERR(0, 503, __pyx_L1_error)
+    }
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_9);
+
+    /* "cpp_string_metric.pyx":504
+ *     if processor is True or processor == default_process:
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))             # <<<<<<<<<<<<<<
  *     elif callable(processor):
  *         s1 = processor(s1)
  */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 488, __pyx_L1_error)
-    __pyx_t_9 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 488, __pyx_L1_error)
+    __pyx_t_9 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 504, __pyx_L1_error)
     try {
-      __pyx_t_1 = normalized_hamming_default_process(__pyx_t_8, __pyx_t_9, __pyx_v_c_score_cutoff);
+      __pyx_t_8 = default_process_(__pyx_t_9);
     } catch(...) {
       __Pyx_CppExn2PyErr();
-      __PYX_ERR(0, 488, __pyx_L1_error)
+      __PYX_ERR(0, 504, __pyx_L1_error)
     }
-    __pyx_t_7 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 488, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
 
-    /* "cpp_string_metric.pyx":487
+    /* "cpp_string_metric.pyx":502
  *         return 0
  * 
  *     if processor is True or processor == default_process:             # <<<<<<<<<<<<<<
- *         return normalized_hamming_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
- *     elif callable(processor):
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  */
+    goto __pyx_L6;
   }
 
-  /* "cpp_string_metric.pyx":489
- *     if processor is True or processor == default_process:
- *         return normalized_hamming_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+  /* "cpp_string_metric.pyx":505
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):             # <<<<<<<<<<<<<<
  *         s1 = processor(s1)
  *         s2 = processor(s2)
  */
-  __pyx_t_2 = __Pyx_PyCallable_Check(__pyx_v_processor); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(0, 489, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyCallable_Check(__pyx_v_processor); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(0, 505, __pyx_L1_error)
   __pyx_t_5 = (__pyx_t_2 != 0);
   if (__pyx_t_5) {
 
-    /* "cpp_string_metric.pyx":490
- *         return normalized_hamming_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    /* "cpp_string_metric.pyx":506
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):
  *         s1 = processor(s1)             # <<<<<<<<<<<<<<
  *         s2 = processor(s2)
- * 
+ *         s1_proc = conv_sequence(s1)
  */
     __Pyx_INCREF(__pyx_v_processor);
     __pyx_t_6 = __pyx_v_processor; __pyx_t_10 = NULL;
@@ -5182,19 +5395,19 @@ static PyObject *__pyx_pf_17cpp_string_metric_8normalized_hamming(CYTHON_UNUSED 
       PyObject *__pyx_callargs[2] = {__pyx_t_10, __pyx_v_s1};
       __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_11, 1+__pyx_t_11);
       __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 490, __pyx_L1_error)
+      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 506, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     }
     __Pyx_DECREF_SET(__pyx_v_s1, __pyx_t_7);
     __pyx_t_7 = 0;
 
-    /* "cpp_string_metric.pyx":491
+    /* "cpp_string_metric.pyx":507
  *     elif callable(processor):
  *         s1 = processor(s1)
  *         s2 = processor(s2)             # <<<<<<<<<<<<<<
- * 
- *     return normalized_hamming_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)
  */
     __Pyx_INCREF(__pyx_v_processor);
     __pyx_t_6 = __pyx_v_processor; __pyx_t_10 = NULL;
@@ -5213,45 +5426,87 @@ static PyObject *__pyx_pf_17cpp_string_metric_8normalized_hamming(CYTHON_UNUSED 
       PyObject *__pyx_callargs[2] = {__pyx_t_10, __pyx_v_s2};
       __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_11, 1+__pyx_t_11);
       __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 491, __pyx_L1_error)
+      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 507, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     }
     __Pyx_DECREF_SET(__pyx_v_s2, __pyx_t_7);
     __pyx_t_7 = 0;
 
-    /* "cpp_string_metric.pyx":489
- *     if processor is True or processor == default_process:
- *         return normalized_hamming_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    /* "cpp_string_metric.pyx":508
+ *         s1 = processor(s1)
+ *         s2 = processor(s2)
+ *         s1_proc = conv_sequence(s1)             # <<<<<<<<<<<<<<
+ *         s2_proc = conv_sequence(s2)
+ *     else:
+ */
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 508, __pyx_L1_error)
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
+
+    /* "cpp_string_metric.pyx":509
+ *         s2 = processor(s2)
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)             # <<<<<<<<<<<<<<
+ *     else:
+ *         s1_proc = conv_sequence(s1)
+ */
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 509, __pyx_L1_error)
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
+
+    /* "cpp_string_metric.pyx":505
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):             # <<<<<<<<<<<<<<
  *         s1 = processor(s1)
  *         s2 = processor(s2)
  */
+    goto __pyx_L6;
   }
 
-  /* "cpp_string_metric.pyx":493
- *         s2 = processor(s2)
+  /* "cpp_string_metric.pyx":511
+ *         s2_proc = conv_sequence(s2)
+ *     else:
+ *         s1_proc = conv_sequence(s1)             # <<<<<<<<<<<<<<
+ *         s2_proc = conv_sequence(s2)
  * 
- *     return normalized_hamming_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)             # <<<<<<<<<<<<<<
+ */
+  /*else*/ {
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 511, __pyx_L1_error)
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
+
+    /* "cpp_string_metric.pyx":512
+ *     else:
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)             # <<<<<<<<<<<<<<
+ * 
+ *     return cpp_normalized_hamming(s1_proc, s2_proc, c_score_cutoff)
+ */
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 512, __pyx_L1_error)
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
+  }
+  __pyx_L6:;
+
+  /* "cpp_string_metric.pyx":514
+ *         s2_proc = conv_sequence(s2)
+ * 
+ *     return cpp_normalized_hamming(s1_proc, s2_proc, c_score_cutoff)             # <<<<<<<<<<<<<<
  * 
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_9 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 493, __pyx_L1_error)
-  __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 493, __pyx_L1_error)
   try {
-    __pyx_t_1 = normalized_hamming_no_process(__pyx_t_9, __pyx_t_8, __pyx_v_c_score_cutoff);
+    __pyx_t_1 = cpp_normalized_hamming(__pyx_v_s1_proc, __pyx_v_s2_proc, __pyx_v_c_score_cutoff);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 493, __pyx_L1_error)
+    __PYX_ERR(0, 514, __pyx_L1_error)
   }
-  __pyx_t_7 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 493, __pyx_L1_error)
+  __pyx_t_7 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 514, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __pyx_r = __pyx_t_7;
   __pyx_t_7 = 0;
   goto __pyx_L0;
 
-  /* "cpp_string_metric.pyx":449
+  /* "cpp_string_metric.pyx":464
  * 
  * 
  * def normalized_hamming(s1, s2, *, processor=None, score_cutoff=None):             # <<<<<<<<<<<<<<
@@ -5274,7 +5529,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_8normalized_hamming(CYTHON_UNUSED 
   return __pyx_r;
 }
 
-/* "cpp_string_metric.pyx":496
+/* "cpp_string_metric.pyx":517
  * 
  * 
  * def jaro_similarity(s1, s2, *, processor=None, score_cutoff=None):             # <<<<<<<<<<<<<<
@@ -5336,14 +5591,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       switch (__pyx_nargs) {
         case  0:
         if (likely((values[0] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_s1)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 496, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 517, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
         if (likely((values[1] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_s2)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 496, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 517, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("jaro_similarity", 1, 2, 2, 1); __PYX_ERR(0, 496, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("jaro_similarity", 1, 2, 2, 1); __PYX_ERR(0, 517, __pyx_L3_error)
         }
       }
       if (kw_args > 0 && likely(kw_args <= 2)) {
@@ -5351,12 +5606,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
         for (index = 2; index < 4 && kw_args > 0; index++) {
           PyObject* value = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, *__pyx_pyargnames[index]);
           if (value) { values[index] = value; kw_args--; }
-          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 496, __pyx_L3_error)
+          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 517, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "jaro_similarity") < 0)) __PYX_ERR(0, 496, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "jaro_similarity") < 0)) __PYX_ERR(0, 517, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
@@ -5371,7 +5626,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("jaro_similarity", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 496, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("jaro_similarity", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 517, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("cpp_string_metric.jaro_similarity", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -5386,6 +5641,8 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 
 static PyObject *__pyx_pf_17cpp_string_metric_10jaro_similarity(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_s1, PyObject *__pyx_v_s2, PyObject *__pyx_v_processor, PyObject *__pyx_v_score_cutoff) {
   double __pyx_v_c_score_cutoff;
+  proc_string __pyx_v_s1_proc;
+  proc_string __pyx_v_s2_proc;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   double __pyx_t_1;
@@ -5406,7 +5663,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_10jaro_similarity(CYTHON_UNUSED Py
   __Pyx_INCREF(__pyx_v_s1);
   __Pyx_INCREF(__pyx_v_s2);
 
-  /* "cpp_string_metric.pyx":521
+  /* "cpp_string_metric.pyx":542
  * 
  *     """
  *     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff             # <<<<<<<<<<<<<<
@@ -5417,12 +5674,12 @@ static PyObject *__pyx_pf_17cpp_string_metric_10jaro_similarity(CYTHON_UNUSED Py
   if ((__pyx_t_2 != 0)) {
     __pyx_t_1 = 0.0;
   } else {
-    __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_v_score_cutoff); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 521, __pyx_L1_error)
+    __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_v_score_cutoff); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 542, __pyx_L1_error)
     __pyx_t_1 = __pyx_t_3;
   }
   __pyx_v_c_score_cutoff = __pyx_t_1;
 
-  /* "cpp_string_metric.pyx":523
+  /* "cpp_string_metric.pyx":544
  *     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
  * 
  *     if s1 is None or s2 is None:             # <<<<<<<<<<<<<<
@@ -5442,7 +5699,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_10jaro_similarity(CYTHON_UNUSED Py
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_2) {
 
-    /* "cpp_string_metric.pyx":524
+    /* "cpp_string_metric.pyx":545
  * 
  *     if s1 is None or s2 is None:
  *         return 0             # <<<<<<<<<<<<<<
@@ -5454,7 +5711,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_10jaro_similarity(CYTHON_UNUSED Py
     __pyx_r = __pyx_int_0;
     goto __pyx_L0;
 
-    /* "cpp_string_metric.pyx":523
+    /* "cpp_string_metric.pyx":544
  *     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
  * 
  *     if s1 is None or s2 is None:             # <<<<<<<<<<<<<<
@@ -5463,12 +5720,12 @@ static PyObject *__pyx_pf_17cpp_string_metric_10jaro_similarity(CYTHON_UNUSED Py
  */
   }
 
-  /* "cpp_string_metric.pyx":526
+  /* "cpp_string_metric.pyx":547
  *         return 0
  * 
  *     if processor is True or processor == default_process:             # <<<<<<<<<<<<<<
- *         return jaro_similarity_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
- *     elif callable(processor):
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  */
   __pyx_t_4 = (__pyx_v_processor == Py_True);
   __pyx_t_5 = (__pyx_t_4 != 0);
@@ -5477,64 +5734,75 @@ static PyObject *__pyx_pf_17cpp_string_metric_10jaro_similarity(CYTHON_UNUSED Py
     __pyx_t_2 = __pyx_t_5;
     goto __pyx_L7_bool_binop_done;
   }
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_default_process); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 526, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_default_process); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 547, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_7 = PyObject_RichCompare(__pyx_v_processor, __pyx_t_6, Py_EQ); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 526, __pyx_L1_error)
+  __pyx_t_7 = PyObject_RichCompare(__pyx_v_processor, __pyx_t_6, Py_EQ); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 547, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 526, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 547, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __pyx_t_2 = __pyx_t_5;
   __pyx_L7_bool_binop_done:;
   if (__pyx_t_2) {
 
-    /* "cpp_string_metric.pyx":527
+    /* "cpp_string_metric.pyx":548
  * 
  *     if processor is True or processor == default_process:
- *         return jaro_similarity_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)             # <<<<<<<<<<<<<<
+ *         s1_proc = default_process_(conv_sequence(s1))             # <<<<<<<<<<<<<<
+ *         s2_proc = default_process_(conv_sequence(s2))
+ *     elif callable(processor):
+ */
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 548, __pyx_L1_error)
+    try {
+      __pyx_t_9 = default_process_(__pyx_t_8);
+    } catch(...) {
+      __Pyx_CppExn2PyErr();
+      __PYX_ERR(0, 548, __pyx_L1_error)
+    }
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_9);
+
+    /* "cpp_string_metric.pyx":549
+ *     if processor is True or processor == default_process:
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))             # <<<<<<<<<<<<<<
  *     elif callable(processor):
  *         s1 = processor(s1)
  */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 527, __pyx_L1_error)
-    __pyx_t_9 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 527, __pyx_L1_error)
+    __pyx_t_9 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 549, __pyx_L1_error)
     try {
-      __pyx_t_1 = jaro_similarity_default_process(__pyx_t_8, __pyx_t_9, __pyx_v_c_score_cutoff);
+      __pyx_t_8 = default_process_(__pyx_t_9);
     } catch(...) {
       __Pyx_CppExn2PyErr();
-      __PYX_ERR(0, 527, __pyx_L1_error)
+      __PYX_ERR(0, 549, __pyx_L1_error)
     }
-    __pyx_t_7 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 527, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
 
-    /* "cpp_string_metric.pyx":526
+    /* "cpp_string_metric.pyx":547
  *         return 0
  * 
  *     if processor is True or processor == default_process:             # <<<<<<<<<<<<<<
- *         return jaro_similarity_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
- *     elif callable(processor):
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  */
+    goto __pyx_L6;
   }
 
-  /* "cpp_string_metric.pyx":528
- *     if processor is True or processor == default_process:
- *         return jaro_similarity_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+  /* "cpp_string_metric.pyx":550
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):             # <<<<<<<<<<<<<<
  *         s1 = processor(s1)
  *         s2 = processor(s2)
  */
-  __pyx_t_2 = __Pyx_PyCallable_Check(__pyx_v_processor); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(0, 528, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyCallable_Check(__pyx_v_processor); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(0, 550, __pyx_L1_error)
   __pyx_t_5 = (__pyx_t_2 != 0);
   if (__pyx_t_5) {
 
-    /* "cpp_string_metric.pyx":529
- *         return jaro_similarity_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    /* "cpp_string_metric.pyx":551
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):
  *         s1 = processor(s1)             # <<<<<<<<<<<<<<
  *         s2 = processor(s2)
- * 
+ *         s1_proc = conv_sequence(s1)
  */
     __Pyx_INCREF(__pyx_v_processor);
     __pyx_t_6 = __pyx_v_processor; __pyx_t_10 = NULL;
@@ -5553,19 +5821,19 @@ static PyObject *__pyx_pf_17cpp_string_metric_10jaro_similarity(CYTHON_UNUSED Py
       PyObject *__pyx_callargs[2] = {__pyx_t_10, __pyx_v_s1};
       __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_11, 1+__pyx_t_11);
       __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 529, __pyx_L1_error)
+      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 551, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     }
     __Pyx_DECREF_SET(__pyx_v_s1, __pyx_t_7);
     __pyx_t_7 = 0;
 
-    /* "cpp_string_metric.pyx":530
+    /* "cpp_string_metric.pyx":552
  *     elif callable(processor):
  *         s1 = processor(s1)
  *         s2 = processor(s2)             # <<<<<<<<<<<<<<
- * 
- *     return jaro_similarity_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)
  */
     __Pyx_INCREF(__pyx_v_processor);
     __pyx_t_6 = __pyx_v_processor; __pyx_t_10 = NULL;
@@ -5584,45 +5852,87 @@ static PyObject *__pyx_pf_17cpp_string_metric_10jaro_similarity(CYTHON_UNUSED Py
       PyObject *__pyx_callargs[2] = {__pyx_t_10, __pyx_v_s2};
       __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_11, 1+__pyx_t_11);
       __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 530, __pyx_L1_error)
+      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 552, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     }
     __Pyx_DECREF_SET(__pyx_v_s2, __pyx_t_7);
     __pyx_t_7 = 0;
 
-    /* "cpp_string_metric.pyx":528
- *     if processor is True or processor == default_process:
- *         return jaro_similarity_default_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)
+    /* "cpp_string_metric.pyx":553
+ *         s1 = processor(s1)
+ *         s2 = processor(s2)
+ *         s1_proc = conv_sequence(s1)             # <<<<<<<<<<<<<<
+ *         s2_proc = conv_sequence(s2)
+ *     else:
+ */
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 553, __pyx_L1_error)
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
+
+    /* "cpp_string_metric.pyx":554
+ *         s2 = processor(s2)
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)             # <<<<<<<<<<<<<<
+ *     else:
+ *         s1_proc = conv_sequence(s1)
+ */
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 554, __pyx_L1_error)
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
+
+    /* "cpp_string_metric.pyx":550
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):             # <<<<<<<<<<<<<<
  *         s1 = processor(s1)
  *         s2 = processor(s2)
  */
+    goto __pyx_L6;
   }
 
-  /* "cpp_string_metric.pyx":532
- *         s2 = processor(s2)
+  /* "cpp_string_metric.pyx":556
+ *         s2_proc = conv_sequence(s2)
+ *     else:
+ *         s1_proc = conv_sequence(s1)             # <<<<<<<<<<<<<<
+ *         s2_proc = conv_sequence(s2)
  * 
- *     return jaro_similarity_no_process(conv_sequence(s1), conv_sequence(s2), c_score_cutoff)             # <<<<<<<<<<<<<<
+ */
+  /*else*/ {
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 556, __pyx_L1_error)
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
+
+    /* "cpp_string_metric.pyx":557
+ *     else:
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)             # <<<<<<<<<<<<<<
+ * 
+ *     return cpp_jaro_similarity(s1_proc, s2_proc, c_score_cutoff)
+ */
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 557, __pyx_L1_error)
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
+  }
+  __pyx_L6:;
+
+  /* "cpp_string_metric.pyx":559
+ *         s2_proc = conv_sequence(s2)
+ * 
+ *     return cpp_jaro_similarity(s1_proc, s2_proc, c_score_cutoff)             # <<<<<<<<<<<<<<
  * 
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_9 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 532, __pyx_L1_error)
-  __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 532, __pyx_L1_error)
   try {
-    __pyx_t_1 = jaro_similarity_no_process(__pyx_t_9, __pyx_t_8, __pyx_v_c_score_cutoff);
+    __pyx_t_1 = cpp_jaro_similarity(__pyx_v_s1_proc, __pyx_v_s2_proc, __pyx_v_c_score_cutoff);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 532, __pyx_L1_error)
+    __PYX_ERR(0, 559, __pyx_L1_error)
   }
-  __pyx_t_7 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 532, __pyx_L1_error)
+  __pyx_t_7 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 559, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __pyx_r = __pyx_t_7;
   __pyx_t_7 = 0;
   goto __pyx_L0;
 
-  /* "cpp_string_metric.pyx":496
+  /* "cpp_string_metric.pyx":517
  * 
  * 
  * def jaro_similarity(s1, s2, *, processor=None, score_cutoff=None):             # <<<<<<<<<<<<<<
@@ -5645,7 +5955,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_10jaro_similarity(CYTHON_UNUSED Py
   return __pyx_r;
 }
 
-/* "cpp_string_metric.pyx":535
+/* "cpp_string_metric.pyx":562
  * 
  * 
  * def jaro_winkler_similarity(s1, s2, *, double prefix_weight=0.1, processor=None, score_cutoff=None):             # <<<<<<<<<<<<<<
@@ -5708,14 +6018,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       switch (__pyx_nargs) {
         case  0:
         if (likely((values[0] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_s1)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 535, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 562, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
         if (likely((values[1] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_s2)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 535, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 562, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("jaro_winkler_similarity", 1, 2, 2, 1); __PYX_ERR(0, 535, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("jaro_winkler_similarity", 1, 2, 2, 1); __PYX_ERR(0, 562, __pyx_L3_error)
         }
       }
       if (kw_args > 0 && likely(kw_args <= 3)) {
@@ -5723,12 +6033,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
         for (index = 2; index < 5 && kw_args > 0; index++) {
           PyObject* value = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, *__pyx_pyargnames[index]);
           if (value) { values[index] = value; kw_args--; }
-          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 535, __pyx_L3_error)
+          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 562, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "jaro_winkler_similarity") < 0)) __PYX_ERR(0, 535, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "jaro_winkler_similarity") < 0)) __PYX_ERR(0, 562, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
@@ -5739,7 +6049,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
     __pyx_v_s1 = values[0];
     __pyx_v_s2 = values[1];
     if (values[2]) {
-      __pyx_v_prefix_weight = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_prefix_weight == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 535, __pyx_L3_error)
+      __pyx_v_prefix_weight = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_prefix_weight == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 562, __pyx_L3_error)
     } else {
       __pyx_v_prefix_weight = ((double)((double)0.1));
     }
@@ -5748,7 +6058,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("jaro_winkler_similarity", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 535, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("jaro_winkler_similarity", 1, 2, 2, __pyx_nargs); __PYX_ERR(0, 562, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("cpp_string_metric.jaro_winkler_similarity", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -5763,6 +6073,8 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 
 static PyObject *__pyx_pf_17cpp_string_metric_12jaro_winkler_similarity(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_s1, PyObject *__pyx_v_s2, double __pyx_v_prefix_weight, PyObject *__pyx_v_processor, PyObject *__pyx_v_score_cutoff) {
   double __pyx_v_c_score_cutoff;
+  proc_string __pyx_v_s1_proc;
+  proc_string __pyx_v_s2_proc;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   double __pyx_t_1;
@@ -5783,7 +6095,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_12jaro_winkler_similarity(CYTHON_U
   __Pyx_INCREF(__pyx_v_s1);
   __Pyx_INCREF(__pyx_v_s2);
 
-  /* "cpp_string_metric.pyx":567
+  /* "cpp_string_metric.pyx":594
  *         If prefix_weight is invalid
  *     """
  *     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff             # <<<<<<<<<<<<<<
@@ -5794,12 +6106,12 @@ static PyObject *__pyx_pf_17cpp_string_metric_12jaro_winkler_similarity(CYTHON_U
   if ((__pyx_t_2 != 0)) {
     __pyx_t_1 = 0.0;
   } else {
-    __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_v_score_cutoff); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 567, __pyx_L1_error)
+    __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_v_score_cutoff); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 594, __pyx_L1_error)
     __pyx_t_1 = __pyx_t_3;
   }
   __pyx_v_c_score_cutoff = __pyx_t_1;
 
-  /* "cpp_string_metric.pyx":569
+  /* "cpp_string_metric.pyx":596
  *     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
  * 
  *     if s1 is None or s2 is None:             # <<<<<<<<<<<<<<
@@ -5819,7 +6131,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_12jaro_winkler_similarity(CYTHON_U
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_2) {
 
-    /* "cpp_string_metric.pyx":570
+    /* "cpp_string_metric.pyx":597
  * 
  *     if s1 is None or s2 is None:
  *         return 0             # <<<<<<<<<<<<<<
@@ -5831,7 +6143,7 @@ static PyObject *__pyx_pf_17cpp_string_metric_12jaro_winkler_similarity(CYTHON_U
     __pyx_r = __pyx_int_0;
     goto __pyx_L0;
 
-    /* "cpp_string_metric.pyx":569
+    /* "cpp_string_metric.pyx":596
  *     cdef double c_score_cutoff = 0.0 if score_cutoff is None else score_cutoff
  * 
  *     if s1 is None or s2 is None:             # <<<<<<<<<<<<<<
@@ -5840,12 +6152,12 @@ static PyObject *__pyx_pf_17cpp_string_metric_12jaro_winkler_similarity(CYTHON_U
  */
   }
 
-  /* "cpp_string_metric.pyx":572
+  /* "cpp_string_metric.pyx":599
  *         return 0
  * 
  *     if processor is True or processor == default_process:             # <<<<<<<<<<<<<<
- *         return jaro_winkler_similarity_default_process(conv_sequence(s1), conv_sequence(s2), prefix_weight, c_score_cutoff)
- *     elif callable(processor):
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  */
   __pyx_t_4 = (__pyx_v_processor == Py_True);
   __pyx_t_5 = (__pyx_t_4 != 0);
@@ -5854,64 +6166,75 @@ static PyObject *__pyx_pf_17cpp_string_metric_12jaro_winkler_similarity(CYTHON_U
     __pyx_t_2 = __pyx_t_5;
     goto __pyx_L7_bool_binop_done;
   }
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_default_process); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 572, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_default_process); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 599, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_7 = PyObject_RichCompare(__pyx_v_processor, __pyx_t_6, Py_EQ); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 572, __pyx_L1_error)
+  __pyx_t_7 = PyObject_RichCompare(__pyx_v_processor, __pyx_t_6, Py_EQ); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 599, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 572, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely((__pyx_t_5 < 0))) __PYX_ERR(0, 599, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __pyx_t_2 = __pyx_t_5;
   __pyx_L7_bool_binop_done:;
   if (__pyx_t_2) {
 
-    /* "cpp_string_metric.pyx":573
+    /* "cpp_string_metric.pyx":600
  * 
  *     if processor is True or processor == default_process:
- *         return jaro_winkler_similarity_default_process(conv_sequence(s1), conv_sequence(s2), prefix_weight, c_score_cutoff)             # <<<<<<<<<<<<<<
+ *         s1_proc = default_process_(conv_sequence(s1))             # <<<<<<<<<<<<<<
+ *         s2_proc = default_process_(conv_sequence(s2))
+ *     elif callable(processor):
+ */
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 600, __pyx_L1_error)
+    try {
+      __pyx_t_9 = default_process_(__pyx_t_8);
+    } catch(...) {
+      __Pyx_CppExn2PyErr();
+      __PYX_ERR(0, 600, __pyx_L1_error)
+    }
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_9);
+
+    /* "cpp_string_metric.pyx":601
+ *     if processor is True or processor == default_process:
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))             # <<<<<<<<<<<<<<
  *     elif callable(processor):
  *         s1 = processor(s1)
  */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 573, __pyx_L1_error)
-    __pyx_t_9 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 573, __pyx_L1_error)
+    __pyx_t_9 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 601, __pyx_L1_error)
     try {
-      __pyx_t_1 = jaro_winkler_similarity_default_process(__pyx_t_8, __pyx_t_9, __pyx_v_prefix_weight, __pyx_v_c_score_cutoff);
+      __pyx_t_8 = default_process_(__pyx_t_9);
     } catch(...) {
       __Pyx_CppExn2PyErr();
-      __PYX_ERR(0, 573, __pyx_L1_error)
+      __PYX_ERR(0, 601, __pyx_L1_error)
     }
-    __pyx_t_7 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 573, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
 
-    /* "cpp_string_metric.pyx":572
+    /* "cpp_string_metric.pyx":599
  *         return 0
  * 
  *     if processor is True or processor == default_process:             # <<<<<<<<<<<<<<
- *         return jaro_winkler_similarity_default_process(conv_sequence(s1), conv_sequence(s2), prefix_weight, c_score_cutoff)
- *     elif callable(processor):
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  */
+    goto __pyx_L6;
   }
 
-  /* "cpp_string_metric.pyx":574
- *     if processor is True or processor == default_process:
- *         return jaro_winkler_similarity_default_process(conv_sequence(s1), conv_sequence(s2), prefix_weight, c_score_cutoff)
+  /* "cpp_string_metric.pyx":602
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):             # <<<<<<<<<<<<<<
  *         s1 = processor(s1)
  *         s2 = processor(s2)
  */
-  __pyx_t_2 = __Pyx_PyCallable_Check(__pyx_v_processor); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(0, 574, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyCallable_Check(__pyx_v_processor); if (unlikely(__pyx_t_2 == ((int)-1))) __PYX_ERR(0, 602, __pyx_L1_error)
   __pyx_t_5 = (__pyx_t_2 != 0);
   if (__pyx_t_5) {
 
-    /* "cpp_string_metric.pyx":575
- *         return jaro_winkler_similarity_default_process(conv_sequence(s1), conv_sequence(s2), prefix_weight, c_score_cutoff)
+    /* "cpp_string_metric.pyx":603
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):
  *         s1 = processor(s1)             # <<<<<<<<<<<<<<
  *         s2 = processor(s2)
- * 
+ *         s1_proc = conv_sequence(s1)
  */
     __Pyx_INCREF(__pyx_v_processor);
     __pyx_t_6 = __pyx_v_processor; __pyx_t_10 = NULL;
@@ -5930,19 +6253,19 @@ static PyObject *__pyx_pf_17cpp_string_metric_12jaro_winkler_similarity(CYTHON_U
       PyObject *__pyx_callargs[2] = {__pyx_t_10, __pyx_v_s1};
       __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_11, 1+__pyx_t_11);
       __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 575, __pyx_L1_error)
+      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 603, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     }
     __Pyx_DECREF_SET(__pyx_v_s1, __pyx_t_7);
     __pyx_t_7 = 0;
 
-    /* "cpp_string_metric.pyx":576
+    /* "cpp_string_metric.pyx":604
  *     elif callable(processor):
  *         s1 = processor(s1)
  *         s2 = processor(s2)             # <<<<<<<<<<<<<<
- * 
- *     return jaro_winkler_similarity_no_process(conv_sequence(s1), conv_sequence(s2), prefix_weight, c_score_cutoff)
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)
  */
     __Pyx_INCREF(__pyx_v_processor);
     __pyx_t_6 = __pyx_v_processor; __pyx_t_10 = NULL;
@@ -5961,43 +6284,85 @@ static PyObject *__pyx_pf_17cpp_string_metric_12jaro_winkler_similarity(CYTHON_U
       PyObject *__pyx_callargs[2] = {__pyx_t_10, __pyx_v_s2};
       __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_11, 1+__pyx_t_11);
       __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 576, __pyx_L1_error)
+      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 604, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     }
     __Pyx_DECREF_SET(__pyx_v_s2, __pyx_t_7);
     __pyx_t_7 = 0;
 
-    /* "cpp_string_metric.pyx":574
- *     if processor is True or processor == default_process:
- *         return jaro_winkler_similarity_default_process(conv_sequence(s1), conv_sequence(s2), prefix_weight, c_score_cutoff)
+    /* "cpp_string_metric.pyx":605
+ *         s1 = processor(s1)
+ *         s2 = processor(s2)
+ *         s1_proc = conv_sequence(s1)             # <<<<<<<<<<<<<<
+ *         s2_proc = conv_sequence(s2)
+ *     else:
+ */
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 605, __pyx_L1_error)
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
+
+    /* "cpp_string_metric.pyx":606
+ *         s2 = processor(s2)
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)             # <<<<<<<<<<<<<<
+ *     else:
+ *         s1_proc = conv_sequence(s1)
+ */
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 606, __pyx_L1_error)
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
+
+    /* "cpp_string_metric.pyx":602
+ *         s1_proc = default_process_(conv_sequence(s1))
+ *         s2_proc = default_process_(conv_sequence(s2))
  *     elif callable(processor):             # <<<<<<<<<<<<<<
  *         s1 = processor(s1)
  *         s2 = processor(s2)
  */
+    goto __pyx_L6;
   }
 
-  /* "cpp_string_metric.pyx":578
- *         s2 = processor(s2)
+  /* "cpp_string_metric.pyx":608
+ *         s2_proc = conv_sequence(s2)
+ *     else:
+ *         s1_proc = conv_sequence(s1)             # <<<<<<<<<<<<<<
+ *         s2_proc = conv_sequence(s2)
  * 
- *     return jaro_winkler_similarity_no_process(conv_sequence(s1), conv_sequence(s2), prefix_weight, c_score_cutoff)             # <<<<<<<<<<<<<<
+ */
+  /*else*/ {
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 608, __pyx_L1_error)
+    __pyx_v_s1_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
+
+    /* "cpp_string_metric.pyx":609
+ *     else:
+ *         s1_proc = conv_sequence(s1)
+ *         s2_proc = conv_sequence(s2)             # <<<<<<<<<<<<<<
+ * 
+ *     return cpp_jaro_winkler_similarity(s1_proc, s2_proc, prefix_weight, c_score_cutoff)
+ */
+    __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 609, __pyx_L1_error)
+    __pyx_v_s2_proc = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
+  }
+  __pyx_L6:;
+
+  /* "cpp_string_metric.pyx":611
+ *         s2_proc = conv_sequence(s2)
+ * 
+ *     return cpp_jaro_winkler_similarity(s1_proc, s2_proc, prefix_weight, c_score_cutoff)             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_9 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 578, __pyx_L1_error)
-  __pyx_t_8 = __pyx_f_17cpp_string_metric_conv_sequence(__pyx_v_s2); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 578, __pyx_L1_error)
   try {
-    __pyx_t_1 = jaro_winkler_similarity_no_process(__pyx_t_9, __pyx_t_8, __pyx_v_prefix_weight, __pyx_v_c_score_cutoff);
+    __pyx_t_1 = cpp_jaro_winkler_similarity(__pyx_v_s1_proc, __pyx_v_s2_proc, __pyx_v_prefix_weight, __pyx_v_c_score_cutoff);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 578, __pyx_L1_error)
+    __PYX_ERR(0, 611, __pyx_L1_error)
   }
-  __pyx_t_7 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 578, __pyx_L1_error)
+  __pyx_t_7 = PyFloat_FromDouble(__pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 611, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __pyx_r = __pyx_t_7;
   __pyx_t_7 = 0;
   goto __pyx_L0;
 
-  /* "cpp_string_metric.pyx":535
+  /* "cpp_string_metric.pyx":562
  * 
  * 
  * def jaro_winkler_similarity(s1, s2, *, double prefix_weight=0.1, processor=None, score_cutoff=None):             # <<<<<<<<<<<<<<
@@ -8990,8 +9355,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, __pyx_k_jaro_winkler_similarity, sizeof(__pyx_k_jaro_winkler_similarity), 0, 0, 1, 1},
   {0, __pyx_k_levenshtein, sizeof(__pyx_k_levenshtein), 0, 0, 1, 1},
   {0, __pyx_k_levenshtein_editops, sizeof(__pyx_k_levenshtein_editops), 0, 0, 1, 1},
-  {0, __pyx_k_levenshtein_editops_line_251, sizeof(__pyx_k_levenshtein_editops_line_251), 0, 1, 0, 0},
-  {0, __pyx_k_levenshtein_line_51, sizeof(__pyx_k_levenshtein_line_51), 0, 1, 0, 0},
+  {0, __pyx_k_levenshtein_editops_line_252, sizeof(__pyx_k_levenshtein_editops_line_252), 0, 1, 0, 0},
+  {0, __pyx_k_levenshtein_line_46, sizeof(__pyx_k_levenshtein_line_46), 0, 1, 0, 0},
   {0, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {0, __pyx_k_max, sizeof(__pyx_k_max), 0, 0, 1, 1},
   {0, __pyx_k_members, sizeof(__pyx_k_members), 0, 0, 1, 1},
@@ -9003,7 +9368,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, __pyx_k_new, sizeof(__pyx_k_new), 0, 0, 1, 1},
   {0, __pyx_k_normalized_hamming, sizeof(__pyx_k_normalized_hamming), 0, 0, 1, 1},
   {0, __pyx_k_normalized_levenshtein, sizeof(__pyx_k_normalized_levenshtein), 0, 0, 1, 1},
-  {0, __pyx_k_normalized_levenshtein_line_298, sizeof(__pyx_k_normalized_levenshtein_line_298), 0, 1, 0, 0},
+  {0, __pyx_k_normalized_levenshtein_line_301, sizeof(__pyx_k_normalized_levenshtein_line_301), 0, 1, 0, 0},
   {0, __pyx_k_parents, sizeof(__pyx_k_parents), 0, 0, 1, 1},
   {0, __pyx_k_pickle, sizeof(__pyx_k_pickle), 0, 0, 1, 1},
   {0, __pyx_k_prefix_weight, sizeof(__pyx_k_prefix_weight), 0, 0, 1, 1},
@@ -9025,7 +9390,9 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, __pyx_k_repr, sizeof(__pyx_k_repr), 0, 0, 1, 1},
   {0, __pyx_k_res, sizeof(__pyx_k_res), 0, 0, 1, 1},
   {0, __pyx_k_s1, sizeof(__pyx_k_s1), 0, 0, 1, 1},
+  {0, __pyx_k_s1_proc, sizeof(__pyx_k_s1_proc), 0, 0, 1, 1},
   {0, __pyx_k_s2, sizeof(__pyx_k_s2), 0, 0, 1, 1},
+  {0, __pyx_k_s2_proc, sizeof(__pyx_k_s2_proc), 0, 0, 1, 1},
   {0, __pyx_k_s_s, sizeof(__pyx_k_s_s), 0, 0, 1, 0},
   {0, __pyx_k_s_s_d, sizeof(__pyx_k_s_s_d), 0, 0, 1, 0},
   {0, __pyx_k_score_cutoff, sizeof(__pyx_k_score_cutoff), 0, 0, 1, 1},
@@ -9105,8 +9472,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_jaro_winkler_similarity, __pyx_k_jaro_winkler_similarity, sizeof(__pyx_k_jaro_winkler_similarity), 0, 0, 1, 1},
   {&__pyx_n_s_levenshtein, __pyx_k_levenshtein, sizeof(__pyx_k_levenshtein), 0, 0, 1, 1},
   {&__pyx_n_s_levenshtein_editops, __pyx_k_levenshtein_editops, sizeof(__pyx_k_levenshtein_editops), 0, 0, 1, 1},
-  {&__pyx_kp_u_levenshtein_editops_line_251, __pyx_k_levenshtein_editops_line_251, sizeof(__pyx_k_levenshtein_editops_line_251), 0, 1, 0, 0},
-  {&__pyx_kp_u_levenshtein_line_51, __pyx_k_levenshtein_line_51, sizeof(__pyx_k_levenshtein_line_51), 0, 1, 0, 0},
+  {&__pyx_kp_u_levenshtein_editops_line_252, __pyx_k_levenshtein_editops_line_252, sizeof(__pyx_k_levenshtein_editops_line_252), 0, 1, 0, 0},
+  {&__pyx_kp_u_levenshtein_line_46, __pyx_k_levenshtein_line_46, sizeof(__pyx_k_levenshtein_line_46), 0, 1, 0, 0},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_max, __pyx_k_max, sizeof(__pyx_k_max), 0, 0, 1, 1},
   {&__pyx_n_s_members, __pyx_k_members, sizeof(__pyx_k_members), 0, 0, 1, 1},
@@ -9118,7 +9485,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_new, __pyx_k_new, sizeof(__pyx_k_new), 0, 0, 1, 1},
   {&__pyx_n_s_normalized_hamming, __pyx_k_normalized_hamming, sizeof(__pyx_k_normalized_hamming), 0, 0, 1, 1},
   {&__pyx_n_s_normalized_levenshtein, __pyx_k_normalized_levenshtein, sizeof(__pyx_k_normalized_levenshtein), 0, 0, 1, 1},
-  {&__pyx_kp_u_normalized_levenshtein_line_298, __pyx_k_normalized_levenshtein_line_298, sizeof(__pyx_k_normalized_levenshtein_line_298), 0, 1, 0, 0},
+  {&__pyx_kp_u_normalized_levenshtein_line_301, __pyx_k_normalized_levenshtein_line_301, sizeof(__pyx_k_normalized_levenshtein_line_301), 0, 1, 0, 0},
   {&__pyx_n_s_parents, __pyx_k_parents, sizeof(__pyx_k_parents), 0, 0, 1, 1},
   {&__pyx_n_s_pickle, __pyx_k_pickle, sizeof(__pyx_k_pickle), 0, 0, 1, 1},
   {&__pyx_n_s_prefix_weight, __pyx_k_prefix_weight, sizeof(__pyx_k_prefix_weight), 0, 0, 1, 1},
@@ -9140,7 +9507,9 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_repr, __pyx_k_repr, sizeof(__pyx_k_repr), 0, 0, 1, 1},
   {&__pyx_n_s_res, __pyx_k_res, sizeof(__pyx_k_res), 0, 0, 1, 1},
   {&__pyx_n_s_s1, __pyx_k_s1, sizeof(__pyx_k_s1), 0, 0, 1, 1},
+  {&__pyx_n_s_s1_proc, __pyx_k_s1_proc, sizeof(__pyx_k_s1_proc), 0, 0, 1, 1},
   {&__pyx_n_s_s2, __pyx_k_s2, sizeof(__pyx_k_s2), 0, 0, 1, 1},
+  {&__pyx_n_s_s2_proc, __pyx_k_s2_proc, sizeof(__pyx_k_s2_proc), 0, 0, 1, 1},
   {&__pyx_kp_s_s_s, __pyx_k_s_s, sizeof(__pyx_k_s_s), 0, 0, 1, 0},
   {&__pyx_kp_s_s_s_d, __pyx_k_s_s_d, sizeof(__pyx_k_s_s_d), 0, 0, 1, 0},
   {&__pyx_n_s_score_cutoff, __pyx_k_score_cutoff, sizeof(__pyx_k_score_cutoff), 0, 0, 1, 1},
@@ -9166,7 +9535,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
 };
 /* #### Code section: cached_builtins ### */
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 244, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 245, __pyx_L1_error)
   __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(1, 36, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(2, 29, __pyx_L1_error)
   return 0;
@@ -9179,92 +9548,92 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "cpp_string_metric.pyx":51
- *     vector[LevenshteinEditOp] levenshtein_editops_default_process(const proc_string& s1, const proc_string& s2) nogil except +
+  /* "cpp_string_metric.pyx":46
+ *     vector[LevenshteinEditOp] cpp_levenshtein_editops(     const proc_string& s1, const proc_string& s2) nogil except +
  * 
  * def levenshtein(s1, s2, *, weights=(1,1,1), processor=None, max=None):             # <<<<<<<<<<<<<<
  *     """
  *     Calculates the minimum number of insertions, deletions, and substitutions
  */
-  __pyx_tuple_ = PyTuple_Pack(3, __pyx_int_1, __pyx_int_1, __pyx_int_1); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(3, __pyx_int_1, __pyx_int_1, __pyx_int_1); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 46, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
-  __pyx_tuple__2 = PyTuple_Pack(9, __pyx_n_s_s1, __pyx_n_s_s2, __pyx_n_s_weights, __pyx_n_s_processor, __pyx_n_s_max, __pyx_n_s_insertion, __pyx_n_s_deletion, __pyx_n_s_substitution, __pyx_n_s_c_max); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_tuple__2 = PyTuple_Pack(11, __pyx_n_s_s1, __pyx_n_s_s2, __pyx_n_s_weights, __pyx_n_s_processor, __pyx_n_s_max, __pyx_n_s_insertion, __pyx_n_s_deletion, __pyx_n_s_substitution, __pyx_n_s_c_max, __pyx_n_s_s1_proc, __pyx_n_s_s2_proc); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 46, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
-  __pyx_codeobj__3 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 9, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cpp_string_metric_pyx, __pyx_n_s_levenshtein, 51, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__3)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_codeobj__3 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 11, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cpp_string_metric_pyx, __pyx_n_s_levenshtein, 46, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__3)) __PYX_ERR(0, 46, __pyx_L1_error)
 
-  /* "cpp_string_metric.pyx":251
+  /* "cpp_string_metric.pyx":252
  *     return result_list
  * 
  * def levenshtein_editops(s1, s2, *, processor=None):             # <<<<<<<<<<<<<<
  *     """
  *     Return list of 3-tuples describing how to turn s1 into s2.
  */
-  __pyx_tuple__4 = PyTuple_Pack(3, __pyx_n_s_s1, __pyx_n_s_s2, __pyx_n_s_processor); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 251, __pyx_L1_error)
+  __pyx_tuple__4 = PyTuple_Pack(5, __pyx_n_s_s1, __pyx_n_s_s2, __pyx_n_s_processor, __pyx_n_s_s1_proc, __pyx_n_s_s2_proc); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 252, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
-  __pyx_codeobj__5 = (PyObject*)__Pyx_PyCode_New(2, 0, 1, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__4, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cpp_string_metric_pyx, __pyx_n_s_levenshtein_editops, 251, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__5)) __PYX_ERR(0, 251, __pyx_L1_error)
+  __pyx_codeobj__5 = (PyObject*)__Pyx_PyCode_New(2, 0, 1, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__4, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cpp_string_metric_pyx, __pyx_n_s_levenshtein_editops, 252, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__5)) __PYX_ERR(0, 252, __pyx_L1_error)
 
-  /* "cpp_string_metric.pyx":298
- *     )
+  /* "cpp_string_metric.pyx":301
+ *     return levenshtein_editops_to_list(cpp_levenshtein_editops(s1_proc, s2_proc))
  * 
  * def normalized_levenshtein(s1, s2, *, weights=(1,1,1), processor=None, score_cutoff=None):             # <<<<<<<<<<<<<<
  *     """
  *     Calculates a normalized levenshtein distance using custom
  */
-  __pyx_tuple__6 = PyTuple_Pack(9, __pyx_n_s_s1, __pyx_n_s_s2, __pyx_n_s_weights, __pyx_n_s_processor, __pyx_n_s_score_cutoff, __pyx_n_s_insertion, __pyx_n_s_deletion, __pyx_n_s_substitution, __pyx_n_s_c_score_cutoff); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 298, __pyx_L1_error)
+  __pyx_tuple__6 = PyTuple_Pack(11, __pyx_n_s_s1, __pyx_n_s_s2, __pyx_n_s_weights, __pyx_n_s_processor, __pyx_n_s_score_cutoff, __pyx_n_s_insertion, __pyx_n_s_deletion, __pyx_n_s_substitution, __pyx_n_s_c_score_cutoff, __pyx_n_s_s1_proc, __pyx_n_s_s2_proc); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 301, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__6);
   __Pyx_GIVEREF(__pyx_tuple__6);
-  __pyx_codeobj__7 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 9, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__6, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cpp_string_metric_pyx, __pyx_n_s_normalized_levenshtein, 298, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__7)) __PYX_ERR(0, 298, __pyx_L1_error)
+  __pyx_codeobj__7 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 11, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__6, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cpp_string_metric_pyx, __pyx_n_s_normalized_levenshtein, 301, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__7)) __PYX_ERR(0, 301, __pyx_L1_error)
 
-  /* "cpp_string_metric.pyx":402
+  /* "cpp_string_metric.pyx":411
  * 
  * 
  * def hamming(s1, s2, *, processor=None, max=None):             # <<<<<<<<<<<<<<
  *     """
  *     Calculates the Hamming distance between two strings.
  */
-  __pyx_tuple__8 = PyTuple_Pack(5, __pyx_n_s_s1, __pyx_n_s_s2, __pyx_n_s_processor, __pyx_n_s_max, __pyx_n_s_c_max); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 402, __pyx_L1_error)
+  __pyx_tuple__8 = PyTuple_Pack(7, __pyx_n_s_s1, __pyx_n_s_s2, __pyx_n_s_processor, __pyx_n_s_max, __pyx_n_s_c_max, __pyx_n_s_s1_proc, __pyx_n_s_s2_proc); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 411, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__8);
   __Pyx_GIVEREF(__pyx_tuple__8);
-  __pyx_codeobj__9 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__8, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cpp_string_metric_pyx, __pyx_n_s_hamming, 402, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__9)) __PYX_ERR(0, 402, __pyx_L1_error)
+  __pyx_codeobj__9 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__8, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cpp_string_metric_pyx, __pyx_n_s_hamming, 411, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__9)) __PYX_ERR(0, 411, __pyx_L1_error)
 
-  /* "cpp_string_metric.pyx":449
+  /* "cpp_string_metric.pyx":464
  * 
  * 
  * def normalized_hamming(s1, s2, *, processor=None, score_cutoff=None):             # <<<<<<<<<<<<<<
  *     """
  *     Calculates a normalized hamming distance
  */
-  __pyx_tuple__10 = PyTuple_Pack(5, __pyx_n_s_s1, __pyx_n_s_s2, __pyx_n_s_processor, __pyx_n_s_score_cutoff, __pyx_n_s_c_score_cutoff); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 449, __pyx_L1_error)
+  __pyx_tuple__10 = PyTuple_Pack(7, __pyx_n_s_s1, __pyx_n_s_s2, __pyx_n_s_processor, __pyx_n_s_score_cutoff, __pyx_n_s_c_score_cutoff, __pyx_n_s_s1_proc, __pyx_n_s_s2_proc); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 464, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__10);
   __Pyx_GIVEREF(__pyx_tuple__10);
-  __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cpp_string_metric_pyx, __pyx_n_s_normalized_hamming, 449, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(0, 449, __pyx_L1_error)
+  __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cpp_string_metric_pyx, __pyx_n_s_normalized_hamming, 464, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(0, 464, __pyx_L1_error)
 
-  /* "cpp_string_metric.pyx":496
+  /* "cpp_string_metric.pyx":517
  * 
  * 
  * def jaro_similarity(s1, s2, *, processor=None, score_cutoff=None):             # <<<<<<<<<<<<<<
  *     """
  *     Calculates the jaro similarity
  */
-  __pyx_tuple__12 = PyTuple_Pack(5, __pyx_n_s_s1, __pyx_n_s_s2, __pyx_n_s_processor, __pyx_n_s_score_cutoff, __pyx_n_s_c_score_cutoff); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 496, __pyx_L1_error)
+  __pyx_tuple__12 = PyTuple_Pack(7, __pyx_n_s_s1, __pyx_n_s_s2, __pyx_n_s_processor, __pyx_n_s_score_cutoff, __pyx_n_s_c_score_cutoff, __pyx_n_s_s1_proc, __pyx_n_s_s2_proc); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 517, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__12);
   __Pyx_GIVEREF(__pyx_tuple__12);
-  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cpp_string_metric_pyx, __pyx_n_s_jaro_similarity, 496, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 496, __pyx_L1_error)
+  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cpp_string_metric_pyx, __pyx_n_s_jaro_similarity, 517, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 517, __pyx_L1_error)
 
-  /* "cpp_string_metric.pyx":535
+  /* "cpp_string_metric.pyx":562
  * 
  * 
  * def jaro_winkler_similarity(s1, s2, *, double prefix_weight=0.1, processor=None, score_cutoff=None):             # <<<<<<<<<<<<<<
  *     """
  *     Calculates the jaro winkler similarity
  */
-  __pyx_tuple__14 = PyTuple_Pack(6, __pyx_n_s_s1, __pyx_n_s_s2, __pyx_n_s_prefix_weight, __pyx_n_s_processor, __pyx_n_s_score_cutoff, __pyx_n_s_c_score_cutoff); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 535, __pyx_L1_error)
+  __pyx_tuple__14 = PyTuple_Pack(8, __pyx_n_s_s1, __pyx_n_s_s2, __pyx_n_s_prefix_weight, __pyx_n_s_processor, __pyx_n_s_score_cutoff, __pyx_n_s_c_score_cutoff, __pyx_n_s_s1_proc, __pyx_n_s_s2_proc); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 562, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__14);
   __Pyx_GIVEREF(__pyx_tuple__14);
-  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cpp_string_metric_pyx, __pyx_n_s_jaro_winkler_similarity, 535, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 535, __pyx_L1_error)
+  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cpp_string_metric_pyx, __pyx_n_s_jaro_winkler_similarity, 562, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 562, __pyx_L1_error)
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
@@ -9403,8 +9772,8 @@ static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
   if (__Pyx_InitString(__pyx_string_tab[55], &__pyx_n_s_jaro_winkler_similarity) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[56], &__pyx_n_s_levenshtein) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[57], &__pyx_n_s_levenshtein_editops) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[58], &__pyx_kp_u_levenshtein_editops_line_251) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[59], &__pyx_kp_u_levenshtein_line_51) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[58], &__pyx_kp_u_levenshtein_editops_line_252) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[59], &__pyx_kp_u_levenshtein_line_46) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[60], &__pyx_n_s_main) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[61], &__pyx_n_s_max) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[62], &__pyx_n_s_members) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
@@ -9416,7 +9785,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
   if (__Pyx_InitString(__pyx_string_tab[68], &__pyx_n_s_new) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[69], &__pyx_n_s_normalized_hamming) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[70], &__pyx_n_s_normalized_levenshtein) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[71], &__pyx_kp_u_normalized_levenshtein_line_298) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[71], &__pyx_kp_u_normalized_levenshtein_line_301) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[72], &__pyx_n_s_parents) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[73], &__pyx_n_s_pickle) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[74], &__pyx_n_s_prefix_weight) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
@@ -9438,27 +9807,29 @@ static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
   if (__Pyx_InitString(__pyx_string_tab[90], &__pyx_n_s_repr) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[91], &__pyx_n_s_res) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[92], &__pyx_n_s_s1) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[93], &__pyx_n_s_s2) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[94], &__pyx_kp_s_s_s) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[95], &__pyx_kp_s_s_s_d) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[96], &__pyx_n_s_score_cutoff) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[97], &__pyx_n_s_self) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[98], &__pyx_n_s_set_name) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[99], &__pyx_n_s_setstate) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[100], &__pyx_n_s_setstate_cython) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[101], &__pyx_n_s_state) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[102], &__pyx_n_s_str) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[103], &__pyx_kp_s_stringsource) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[104], &__pyx_n_s_substitution) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[105], &__pyx_n_s_super) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[106], &__pyx_n_s_test) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[107], &__pyx_n_s_typecode) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[108], &__pyx_n_s_update) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[109], &__pyx_n_s_use_setstate) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[110], &__pyx_n_s_v) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[111], &__pyx_n_s_value) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[112], &__pyx_n_s_values) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[113], &__pyx_n_s_weights) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[93], &__pyx_n_s_s1_proc) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[94], &__pyx_n_s_s2) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[95], &__pyx_n_s_s2_proc) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[96], &__pyx_kp_s_s_s) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[97], &__pyx_kp_s_s_s_d) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[98], &__pyx_n_s_score_cutoff) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[99], &__pyx_n_s_self) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[100], &__pyx_n_s_set_name) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[101], &__pyx_n_s_setstate) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[102], &__pyx_n_s_setstate_cython) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[103], &__pyx_n_s_state) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[104], &__pyx_n_s_str) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[105], &__pyx_kp_s_stringsource) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[106], &__pyx_n_s_substitution) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[107], &__pyx_n_s_super) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[108], &__pyx_n_s_test) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[109], &__pyx_n_s_typecode) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[110], &__pyx_n_s_update) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[111], &__pyx_n_s_use_setstate) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[112], &__pyx_n_s_v) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[113], &__pyx_n_s_value) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[114], &__pyx_n_s_values) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[115], &__pyx_n_s_weights) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   #endif
   #if !CYTHON_USE_MODULE_STATE
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
@@ -9913,135 +10284,135 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "cpp_string_metric.pyx":51
- *     vector[LevenshteinEditOp] levenshtein_editops_default_process(const proc_string& s1, const proc_string& s2) nogil except +
+  /* "cpp_string_metric.pyx":46
+ *     vector[LevenshteinEditOp] cpp_levenshtein_editops(     const proc_string& s1, const proc_string& s2) nogil except +
  * 
  * def levenshtein(s1, s2, *, weights=(1,1,1), processor=None, max=None):             # <<<<<<<<<<<<<<
  *     """
  *     Calculates the minimum number of insertions, deletions, and substitutions
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 46, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_weights, ((PyObject*)__pyx_tuple_)) < 0) __PYX_ERR(0, 51, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_processor, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 51, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_max, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 51, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_17cpp_string_metric_1levenshtein, 0, __pyx_n_s_levenshtein, NULL, __pyx_n_s_cpp_string_metric, __pyx_d, ((PyObject *)__pyx_codeobj__3)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 51, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_weights, ((PyObject*)__pyx_tuple_)) < 0) __PYX_ERR(0, 46, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_processor, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 46, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_max, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 46, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_17cpp_string_metric_1levenshtein, 0, __pyx_n_s_levenshtein, NULL, __pyx_n_s_cpp_string_metric, __pyx_d, ((PyObject *)__pyx_codeobj__3)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 46, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetDefaultsKwDict(__pyx_t_2, __pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_levenshtein, __pyx_t_2) < 0) __PYX_ERR(0, 51, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_levenshtein, __pyx_t_2) < 0) __PYX_ERR(0, 46, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "cpp_string_metric.pyx":251
+  /* "cpp_string_metric.pyx":252
  *     return result_list
  * 
  * def levenshtein_editops(s1, s2, *, processor=None):             # <<<<<<<<<<<<<<
  *     """
  *     Return list of 3-tuples describing how to turn s1 into s2.
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 251, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 252, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_processor, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 251, __pyx_L1_error)
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_17cpp_string_metric_3levenshtein_editops, 0, __pyx_n_s_levenshtein_editops, NULL, __pyx_n_s_cpp_string_metric, __pyx_d, ((PyObject *)__pyx_codeobj__5)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 251, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_processor, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 252, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_17cpp_string_metric_3levenshtein_editops, 0, __pyx_n_s_levenshtein_editops, NULL, __pyx_n_s_cpp_string_metric, __pyx_d, ((PyObject *)__pyx_codeobj__5)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 252, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_CyFunction_SetDefaultsKwDict(__pyx_t_1, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_levenshtein_editops, __pyx_t_1) < 0) __PYX_ERR(0, 251, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_levenshtein_editops, __pyx_t_1) < 0) __PYX_ERR(0, 252, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "cpp_string_metric.pyx":298
- *     )
+  /* "cpp_string_metric.pyx":301
+ *     return levenshtein_editops_to_list(cpp_levenshtein_editops(s1_proc, s2_proc))
  * 
  * def normalized_levenshtein(s1, s2, *, weights=(1,1,1), processor=None, score_cutoff=None):             # <<<<<<<<<<<<<<
  *     """
  *     Calculates a normalized levenshtein distance using custom
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 298, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 301, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_weights, ((PyObject*)__pyx_tuple_)) < 0) __PYX_ERR(0, 298, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_processor, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 298, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_score_cutoff, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 298, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_17cpp_string_metric_5normalized_levenshtein, 0, __pyx_n_s_normalized_levenshtein, NULL, __pyx_n_s_cpp_string_metric, __pyx_d, ((PyObject *)__pyx_codeobj__7)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 298, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_weights, ((PyObject*)__pyx_tuple_)) < 0) __PYX_ERR(0, 301, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_processor, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 301, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_score_cutoff, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 301, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_17cpp_string_metric_5normalized_levenshtein, 0, __pyx_n_s_normalized_levenshtein, NULL, __pyx_n_s_cpp_string_metric, __pyx_d, ((PyObject *)__pyx_codeobj__7)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 301, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetDefaultsKwDict(__pyx_t_2, __pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_normalized_levenshtein, __pyx_t_2) < 0) __PYX_ERR(0, 298, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_normalized_levenshtein, __pyx_t_2) < 0) __PYX_ERR(0, 301, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "cpp_string_metric.pyx":402
+  /* "cpp_string_metric.pyx":411
  * 
  * 
  * def hamming(s1, s2, *, processor=None, max=None):             # <<<<<<<<<<<<<<
  *     """
  *     Calculates the Hamming distance between two strings.
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 402, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 411, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_processor, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 402, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_max, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 402, __pyx_L1_error)
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_17cpp_string_metric_7hamming, 0, __pyx_n_s_hamming, NULL, __pyx_n_s_cpp_string_metric, __pyx_d, ((PyObject *)__pyx_codeobj__9)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 402, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_processor, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 411, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_max, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 411, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_17cpp_string_metric_7hamming, 0, __pyx_n_s_hamming, NULL, __pyx_n_s_cpp_string_metric, __pyx_d, ((PyObject *)__pyx_codeobj__9)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 411, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_CyFunction_SetDefaultsKwDict(__pyx_t_1, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_hamming, __pyx_t_1) < 0) __PYX_ERR(0, 402, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_hamming, __pyx_t_1) < 0) __PYX_ERR(0, 411, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "cpp_string_metric.pyx":449
+  /* "cpp_string_metric.pyx":464
  * 
  * 
  * def normalized_hamming(s1, s2, *, processor=None, score_cutoff=None):             # <<<<<<<<<<<<<<
  *     """
  *     Calculates a normalized hamming distance
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 449, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 464, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_processor, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 449, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_score_cutoff, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 449, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_17cpp_string_metric_9normalized_hamming, 0, __pyx_n_s_normalized_hamming, NULL, __pyx_n_s_cpp_string_metric, __pyx_d, ((PyObject *)__pyx_codeobj__11)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 449, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_processor, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 464, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_score_cutoff, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 464, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_17cpp_string_metric_9normalized_hamming, 0, __pyx_n_s_normalized_hamming, NULL, __pyx_n_s_cpp_string_metric, __pyx_d, ((PyObject *)__pyx_codeobj__11)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 464, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetDefaultsKwDict(__pyx_t_2, __pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_normalized_hamming, __pyx_t_2) < 0) __PYX_ERR(0, 449, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_normalized_hamming, __pyx_t_2) < 0) __PYX_ERR(0, 464, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "cpp_string_metric.pyx":496
+  /* "cpp_string_metric.pyx":517
  * 
  * 
  * def jaro_similarity(s1, s2, *, processor=None, score_cutoff=None):             # <<<<<<<<<<<<<<
  *     """
  *     Calculates the jaro similarity
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 496, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 517, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_processor, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 496, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_score_cutoff, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 496, __pyx_L1_error)
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_17cpp_string_metric_11jaro_similarity, 0, __pyx_n_s_jaro_similarity, NULL, __pyx_n_s_cpp_string_metric, __pyx_d, ((PyObject *)__pyx_codeobj__13)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 496, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_processor, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 517, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_score_cutoff, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 517, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_17cpp_string_metric_11jaro_similarity, 0, __pyx_n_s_jaro_similarity, NULL, __pyx_n_s_cpp_string_metric, __pyx_d, ((PyObject *)__pyx_codeobj__13)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 517, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_CyFunction_SetDefaultsKwDict(__pyx_t_1, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_jaro_similarity, __pyx_t_1) < 0) __PYX_ERR(0, 496, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_jaro_similarity, __pyx_t_1) < 0) __PYX_ERR(0, 517, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "cpp_string_metric.pyx":535
+  /* "cpp_string_metric.pyx":562
  * 
  * 
  * def jaro_winkler_similarity(s1, s2, *, double prefix_weight=0.1, processor=None, score_cutoff=None):             # <<<<<<<<<<<<<<
  *     """
  *     Calculates the jaro winkler similarity
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 535, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 562, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyFloat_FromDouble(((double)0.1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 535, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(((double)0.1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 562, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_prefix_weight, __pyx_t_2) < 0) __PYX_ERR(0, 535, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_prefix_weight, __pyx_t_2) < 0) __PYX_ERR(0, 562, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_processor, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 535, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_score_cutoff, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 535, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_17cpp_string_metric_13jaro_winkler_similarity, 0, __pyx_n_s_jaro_winkler_similarity, NULL, __pyx_n_s_cpp_string_metric, __pyx_d, ((PyObject *)__pyx_codeobj__15)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 535, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_processor, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 562, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_score_cutoff, ((PyObject *)Py_None)) < 0) __PYX_ERR(0, 562, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_17cpp_string_metric_13jaro_winkler_similarity, 0, __pyx_n_s_jaro_winkler_similarity, NULL, __pyx_n_s_cpp_string_metric, __pyx_d, ((PyObject *)__pyx_codeobj__15)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 562, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetDefaultsKwDict(__pyx_t_2, __pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_jaro_winkler_similarity, __pyx_t_2) < 0) __PYX_ERR(0, 535, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_jaro_winkler_similarity, __pyx_t_2) < 0) __PYX_ERR(0, 562, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "cpp_string_metric.pyx":1
@@ -10051,9 +10422,9 @@ if (!__Pyx_RefNanny) {
  */
   __pyx_t_2 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_kp_u_levenshtein_line_51, __pyx_kp_u_Calculates_the_minimum_number_o) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_kp_u_levenshtein_editops_line_251, __pyx_kp_u_Return_list_of_3_tuples_describ) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_kp_u_normalized_levenshtein_line_298, __pyx_kp_u_Calculates_a_normalized_levensh) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_kp_u_levenshtein_line_46, __pyx_kp_u_Calculates_the_minimum_number_o) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_kp_u_levenshtein_editops_line_252, __pyx_kp_u_Return_list_of_3_tuples_describ) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_kp_u_normalized_levenshtein_line_301, __pyx_kp_u_Calculates_a_normalized_levensh) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_test, __pyx_t_2) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 

@@ -26,6 +26,14 @@ private:
     char const* m_error;
 };
 
+static void* safe_malloc(std::size_t nmemb, std::size_t size) {
+    std::size_t alloc_size = nmemb * size;
+    if (alloc_size / nmemb != size) {
+        return NULL;
+    }
+    return malloc(alloc_size);
+}
+
 #define LIST_OF_CASES(...)   \
     X_ENUM(RAPIDFUZZ_UINT8,                       uint8_t  , (__VA_ARGS__)) \
     X_ENUM(RAPIDFUZZ_UINT16,                      uint16_t , (__VA_ARGS__)) \
@@ -35,7 +43,7 @@ private:
 
 
 enum RapidfuzzType {
-#       define X_ENUM(kind, type, MSVC_TUPLE) kind,
+#       define X_ENUM(kind, type, RATIO_FUNC) kind,
         LIST_OF_CASES()
 #       undef X_ENUM
 };
@@ -83,7 +91,6 @@ struct proc_string {
         }
     }
 };
-
 
 template <typename T>
 static inline rapidfuzz::basic_string_view<T> no_process(const proc_string& s)
@@ -179,86 +186,69 @@ static inline proc_string convert_string(PyObject* py_str)
     }
 }
 
-
-/* note that the arguments s1 and s2 are switched on purpose, so when calling
- * the macro in impl and impl_inner both s1 and s2 are processed
- *
- * GET_RATIO_FUNC MSVC_TUPLE and GET_PROCESSOR MSVC_TUPLE are used
- * to work around the utterly broken preprocessor in MSVC
- * in more recent versions a standard conformant preprocessor can be activated in MSVC using
- * a compiler flag: https://devblogs.microsoft.com/cppblog/msvc-preprocessor-progress-towards-conformance/
- * However until nobody uses the older versions of MSVC anymore this does not help ...
- */
-#define GET_RATIO_FUNC(RATIO_FUNC, PROCESSOR) RATIO_FUNC
-#define GET_PROCESSOR(RATIO_FUNC, PROCESSOR) PROCESSOR
-
-# define X_ENUM(KIND, TYPE, MSVC_TUPLE) \
-    case KIND: return GET_RATIO_FUNC MSVC_TUPLE  (s2, GET_PROCESSOR MSVC_TUPLE <TYPE>(s1), args...);
+# define X_ENUM(KIND, TYPE, RATIO_FUNC) \
+    case KIND: return RATIO_FUNC(s2, no_process<TYPE>(s1), args...);
 
 /* generate <ratio_name>_impl_inner_<processor> functions which are used internally
  * for normalized distances
  */
-#define RATIO_IMPL_INNER(RATIO, RATIO_FUNC, PROCESSOR)                                             \
-template<typename Sentence, typename... Args>                                                      \
-double RATIO##_impl_inner_##PROCESSOR(const proc_string& s1, const Sentence& s2, Args... args)     \
-{                                                                                                  \
-    switch(s1.kind){                                                                               \
-    LIST_OF_CASES(RATIO_FUNC, PROCESSOR)                                                           \
-    }                                                                                              \
-    assert(false); /* silence any warnings about missing return value */                           \
+#define RATIO_IMPL_INNER(RATIO, RATIO_FUNC)                                        \
+template<typename Sentence, typename... Args>                                      \
+double RATIO##_impl_inner(const proc_string& s1, const Sentence& s2, Args... args) \
+{                                                                                  \
+    switch(s1.kind) {                                                              \
+    LIST_OF_CASES(RATIO_FUNC)                                                      \
+    }                                                                              \
+    assert(false); /* silence any warnings about missing return value */           \
 }
 
 /* generate <ratio_name>_impl_<processor> functions which are used internally
  * for normalized distances
  */
-#define RATIO_IMPL(RATIO, RATIO_FUNC, PROCESSOR)                                             \
-template<typename... Args>                                                                   \
-double RATIO##_impl_##PROCESSOR(const proc_string& s1, const proc_string& s2, Args... args)  \
-{                                                                                            \
-    switch(s1.kind){                                                                         \
-    LIST_OF_CASES(RATIO##_impl_inner_##PROCESSOR, PROCESSOR)                                 \
-    }                                                                                        \
-    assert(false); /* silence any warnings about missing return value */                     \
+#define RATIO_IMPL(RATIO, RATIO_FUNC)                                           \
+template<typename... Args>                                                      \
+double RATIO##_impl(const proc_string& s1, const proc_string& s2, Args... args) \
+{                                                                               \
+    switch(s1.kind) {                                                           \
+    LIST_OF_CASES(RATIO##_impl_inner)                                           \
+    }                                                                           \
+    assert(false); /* silence any warnings about missing return value */        \
 }
 
-#define RATIO_IMPL_DEF(RATIO, RATIO_FUNC)            \
-RATIO_IMPL(      RATIO, RATIO_FUNC, default_process) \
-RATIO_IMPL_INNER(RATIO, RATIO_FUNC, default_process) \
-RATIO_IMPL(      RATIO, RATIO_FUNC, no_process)      \
-RATIO_IMPL_INNER(RATIO, RATIO_FUNC, no_process)
+#define RATIO_IMPL_DEF(RATIO, RATIO_FUNC) \
+RATIO_IMPL_INNER(RATIO, RATIO_FUNC)       \
+RATIO_IMPL(      RATIO, RATIO_FUNC)
+
 
 /* generate <ratio_name>_impl_inner_<processor> functions which are used internally
  * for distances
  */
-#define DISTANCE_IMPL_INNER(RATIO, RATIO_FUNC, PROCESSOR)                                          \
-template<typename Sentence, typename... Args>                                                      \
-size_t RATIO##_impl_inner_##PROCESSOR(const proc_string& s1, const Sentence& s2, Args... args)     \
-{                                                                                                  \
-    switch(s1.kind){                                                                               \
-    LIST_OF_CASES(RATIO_FUNC, PROCESSOR)                                                           \
-    }                                                                                              \
-    assert(false); /* silence any warnings about missing return value */                           \
+#define DISTANCE_IMPL_INNER(RATIO, RATIO_FUNC)                                     \
+template<typename Sentence, typename... Args>                                      \
+size_t RATIO##_impl_inner(const proc_string& s1, const Sentence& s2, Args... args) \
+{                                                                                  \
+    switch(s1.kind) {                                                              \
+    LIST_OF_CASES(RATIO_FUNC)                                                      \
+    }                                                                              \
+    assert(false); /* silence any warnings about missing return value */           \
 }
 
 /* generate <ratio_name>_impl_<processor> functions which are used internally
  * for distances
  */
-#define DISTANCE_IMPL(RATIO, RATIO_FUNC, PROCESSOR)                                          \
-template<typename... Args>                                                                   \
-size_t RATIO##_impl_##PROCESSOR(const proc_string& s1, const proc_string& s2, Args... args)  \
-{                                                                                            \
-    switch(s1.kind){                                                                         \
-    LIST_OF_CASES(RATIO##_impl_inner_##PROCESSOR, PROCESSOR)                                 \
-    }                                                                                        \
-    assert(false); /* silence any warnings about missing return value */                     \
+#define DISTANCE_IMPL(RATIO, RATIO_FUNC)                                        \
+template<typename... Args>                                                      \
+size_t RATIO##_impl(const proc_string& s1, const proc_string& s2, Args... args) \
+{                                                                               \
+    switch(s1.kind) {                                                           \
+    LIST_OF_CASES(RATIO##_impl_inner)                                           \
+    }                                                                           \
+    assert(false); /* silence any warnings about missing return value */        \
 }
 
-#define DISTANCE_IMPL_DEF(RATIO, RATIO_FUNC)            \
-DISTANCE_IMPL(      RATIO, RATIO_FUNC, default_process) \
-DISTANCE_IMPL_INNER(RATIO, RATIO_FUNC, default_process) \
-DISTANCE_IMPL(      RATIO, RATIO_FUNC, no_process)      \
-DISTANCE_IMPL_INNER(RATIO, RATIO_FUNC, no_process)
-
+#define DISTANCE_IMPL_DEF(RATIO, RATIO_FUNC) \
+DISTANCE_IMPL_INNER(RATIO, RATIO_FUNC)       \
+DISTANCE_IMPL(      RATIO, RATIO_FUNC)
 
 /* fuzz */
 RATIO_IMPL_DEF(ratio,                    fuzz::ratio)
@@ -282,31 +272,29 @@ RATIO_IMPL_DEF(jaro_similarity,          string_metric::jaro_similarity)
 
 # undef X_ENUM
 
-/* this macro generates the function definition for a simple normalized scorer
- * which only takes a score_cutoff
- */
-#define SIMPLE_RATIO_DEF(RATIO)                                                     \
-double RATIO##_no_process(const proc_string& s1, const proc_string& s2, double score_cutoff)      \
-{                                                                                   \
-    return RATIO##_impl_no_process(s1, s2, score_cutoff);                           \
-}                                                                                   \
-double RATIO##_default_process(const proc_string& s1, const proc_string& s2, double score_cutoff) \
-{                                                                                   \
-    return RATIO##_impl_default_process(s1, s2, score_cutoff);                      \
+template<typename CharT>
+proc_string default_process_impl(const proc_string& s) 
+{
+    proc_string proc;
+    proc.data = safe_malloc(s.length, sizeof(CharT));
+    if (NULL == proc.data)
+    {
+        throw std::bad_alloc();
+    }
+    std::copy((CharT*)s.data, (CharT*)s.data + s.length, (CharT*)proc.data);
+    proc.length = utils::default_process((CharT*)proc.data, s.length);
+    proc.kind = s.kind;
+    proc.allocated = true;
+
+    return proc;
 }
 
-
-/* this macro generates the function definition for a simple scorer
- * which only takes a max
- */
-#define SIMPLE_DISTANCE_DEF(RATIO)                                            \
-PyObject* RATIO##_no_process(const proc_string& s1, const proc_string& s2, size_t max)      \
-{                                                                             \
-    size_t result = RATIO##_impl_no_process(s1, s2, max); \
-    return dist_to_long(result);                                                \
-}                                                                             \
-PyObject* RATIO##_default_process(const proc_string& s1, const proc_string& s2, size_t max) \
-{                                                                             \
-    size_t result = RATIO##_impl_default_process(s1, s2, max); \
-    return dist_to_long(result);                                              \
+proc_string default_process_(const proc_string& s) 
+{                
+    switch(s.kind) {         
+#   define X_ENUM(KIND, TYPE, RATIO_FUNC) case KIND: return default_process_impl<TYPE>(s);                                                                
+    LIST_OF_CASES()     
+#   undef X_ENUM                            
+    }                                                                                        
+    assert(false); /* silence any warnings about missing return value */                     
 }
